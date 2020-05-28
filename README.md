@@ -1,1 +1,3 @@
-# codeland-copy
+Code for the CodeLand: Distributed 2020 landing page and friends. To be updated...
+
+_codeland.html_: code for the main CodeLand landing page
