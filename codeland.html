@@ -40,10 +40,16 @@
   }
 
   /* Placeholder heights */
-  #codeland-schedule { height: 500px; }
-  #codeland-sponsors { height: 500px; }
-  #codeland-social-corner { height: 500px; }
-  #codeland-career-fair { height: 500px; }
+  #codeland-schedule { min-height: 500px; }
+  #codeland-sponsors { min-height: 500px; }
+  #codeland-social-corner { min-height: 500px; }
+  #codeland-career-fair { min-height: 500px; }
+
+  .codeland-sponsors__logo {
+    background: green;
+    width: 400px;
+    height: 400px;
+  }
 
   /* Bigger screens  */
   @media screen and (min-width: 900px) {
@@ -88,14 +94,277 @@
     <div id="speaker-info" class="v-flex">
       <p class="title ff-accent fs-l fw-bold">About the Speaker</p>
       <p class="body">
-        Vaidehi Joshi is a senior engineer at DEV, where she builds community and helps improve the software careers of millions. She enjoys building and breaking code, but loves creating empathetic engineering teams a whole lot more. She is the creator of basecs and baseds, two writing series exploring the fundamentals of computer science and distributed systems. She also co-hosts the Base.cs Podcast, and is a producer of the BaseCS and Byte Sized video series.
+        Vaidehi Joshi is a senior engineer at DEV, where she builds community
+        and helps improve the software careers of millions. She enjoys building
+        and breaking code, but loves creating empathetic engineering teams a
+        whole lot more. She is the creator of basecs and baseds, two writing
+        series exploring the fundamentals of computer science and distributed
+        systems. She also co-hosts the Base.cs Podcast, and is a producer of the
+        BaseCS and Byte Sized video series.
       </p>
-      <button class="crayons-btn crayons-btn--secondary" type="button">See discussion</button>
+      <button class="crayons-btn crayons-btn--secondary" type="button">
+        See discussion
+      </button>
     </div>
   </div>
 
-  <div id="codeland-schedule" class="codeland-row"></div>
-  <div id="codeland-sponsors" class="codeland-row"></div>
-  <div id="codeland-social-corner" class="codeland-row"></div>
-  <div id="codeland-career-fair" class="codeland-row"></div>
+  <nav class="crayons-tabs crayons-tabs--scrollable">
+    <a href="#" class="crayons-tabs__item crayons-tabs__item--current">
+      Livestream
+    </a>
+    <a href="#" class="crayons-tabs__item">
+      Schedule
+    </a>
+    <a href="#" class="crayons-tabs__item">
+      Sponsors
+    </a>
+    <a href="#" class="crayons-tabs__item">
+      Social Rooms
+    </a>
+    <a href="#" class="crayons-tabs__item">
+      Career Fair
+    </a>
+  </nav>
+
+  <div id="codeland-schedule" class="codeland-row">
+    <header>
+      <h2 class="codeland-section__title">
+        Schedule & agenda
+      </h2>
+    </header>
+    <div class="codeland-schedule__event">
+      <div class="codeland-schedule__event-metadata">
+        10 AM - 10:20 AM UTC
+      </div>
+      <div class="codeland-schedule__event-info">
+        <h3>
+          Welcome Address
+        </h3>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+          ad minim veniam, quis nostrud exercitation t dolore magna aliqua. Ut
+          enim ad minim veniam, quis nostrud exercitation  
+        </p>
+      </div>
+      <div class="codeland-schedule__event-info">
+        <h3>
+          Scott Hanselman (keynote)
+        </h3>
+        <h4>
+          The History of Computer Science
+        </h4>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+          ad minim veniam, quis nostrud exercitation t dolore magna aliqua. Ut
+          enim ad minim veniam, quis nostrud exercitation  
+        </p>
+      </div>
+      <div class="codeland-schedule__event-info">
+        <h3>
+          Gargi Sharma
+        </h3>
+        <h4>
+          Printing floating point numbers is surprisingly hard!
+        </h4>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+          ad minim veniam, quis nostrud exercitation t dolore magna aliqua. Ut
+          enim ad minim veniam, quis nostrud exercitation  
+        </p>
+      </div>
+      <div class="codeland-schedule__event-info">
+        <h3>
+          Brian Vermeer
+        </h3>
+        <h4>
+          Live Exploiting Your OS Dependencies
+        </h4>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+          ad minim veniam, quis nostrud exercitation t dolore magna aliqua. Ut
+          enim ad minim veniam, quis nostrud exercitation  
+        </p>
+      </div>
+    </div>
+  </div>
+  <section id="codeland-sponsors" class="codeland-row">
+    <header>
+      <h2 class="codeland-section__title">
+        Sponsors
+      </h2>
+      <p class="codeland-section__description">
+        Thanks to these awesome sponsors for supporting CodeLand this year.
+        Check our their Sponsor Booths to connect with them, learn more, and ask
+        questions.
+      </p>
+    </header>
+    <div class="codeland-sponsors__platinum">
+      <a href="">
+        <figure>
+          <img class="codeland-sponsors__logo" src="" />
+        </figure>
+      </a>
+      <a href="">
+        <figure>
+          <img class="codeland-sponsors__logo" src="" />
+        </figure>
+      </a>
+    </div>
+    <div class="codeland-sponsors__mentor">
+      <a href="">
+        <figure>
+          <img class="codeland-sponsors__logo" src="" />
+        </figure>
+      </a>
+      <a href="">
+        <figure>
+          <img class="codeland-sponsors__logo" src="" />
+        </figure>
+      </a>
+      <a href="">
+        <figure>
+          <img class="codeland-sponsors__logo" src="" />
+        </figure>
+      </a>
+      <a href="">
+        <figure>
+          <img class="codeland-sponsors__logo" src="" />
+        </figure>
+      </a>
+    </div>
+  </section>
+  <section id="codeland-social-corner" class="codeland-row">
+    <header>
+      <h2 class="codeland-section__title">
+        Connect with other attendees
+      </h2>
+      <p class="codeland-section__description">
+        Even though we’re virtual this year, we still want you to know that you
+        can still make connects with others. Here are some breakout rooms in
+        Connect where you can chat and mingle with others.
+      </p>
+    </header>
+    <div class="codeland-social-corner__body">
+      <div class-"codeland-social-corner__item">
+        <h4>
+          #watercooler
+        </h4>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididuntV
+        </p>
+        <button class="crayons-btn crayons-btn--secondary" type="button">
+          Join
+        </button>
+      </div>
+      <div class-"codeland-social-corner__item">
+        <h4>
+          #watercooler
+        </h4>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididuntV
+        </p>
+        <button class="crayons-btn crayons-btn--secondary" type="button">
+          Join
+        </button>
+      </div>
+      <div class-"codeland-social-corner__item">
+        <h4>
+          #watercooler
+        </h4>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididuntV
+        </p>
+        <button class="crayons-btn crayons-btn--secondary" type="button">
+          Join
+        </button>
+      </div>
+      <div class-"codeland-social-corner__item">
+        <h4>
+          #watercooler
+        </h4>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididuntV
+        </p>
+        <button class="crayons-btn crayons-btn--secondary" type="button">
+          Join
+        </button>
+      </div>
+      <div class-"codeland-social-corner__item">
+        <h4>
+          #watercooler
+        </h4>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididuntV
+        </p>
+        <button class="crayons-btn crayons-btn--secondary" type="button">
+          Join
+        </button>
+      </div>
+      <div class-"codeland-social-corner__item">
+        <h4>
+          #watercooler
+        </h4>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididuntV
+        </p>
+        <button class="crayons-btn crayons-btn--secondary" type="button">
+          Join
+        </button>
+      </div>
+    </div>
+  </section>
+  <section id="codeland-career-fair" class="codeland-row">
+    <header>
+      <h2 class="codeland-section__title">
+        Career fair
+      </h2>
+      <p class="codeland-section__description">
+        Thanks to these awesome sponsors for supporting CodeLand this year.
+        Check our their Sponsor Booths to connect with them, learn more, and ask
+        questions.
+      </p>
+    </header>
+    <div class="codeland-career-fair__body">
+      <a href="">
+        <figure>
+          <img class="codeland-sponsors__logo" src="" />
+        </figure>
+      </a>
+      <a href="">
+        <figure>
+          <img class="codeland-sponsors__logo" src="" />
+        </figure>
+      </a>
+      <a href="">
+        <figure>
+          <img class="codeland-sponsors__logo" src="" />
+        </figure>
+      </a>
+      <a href="">
+        <figure>
+          <img class="codeland-sponsors__logo" src="" />
+        </figure>
+      </a>
+    </div>
+  </section>
+  <section id="codeland-endnote" class="codeland-row">
+    <h2 class="codeland-section__title">
+      Thank you for coming to CodeLand.
+    </h2>
+    <p class="codeland-section__description">
+      Thanks to these awesome sponsors for supporting CodeLand this year.
+      Check our their Sponsor Booths to connect with them, learn more, and ask
+      questions.
+    </p>
+  </section>
 </div>
