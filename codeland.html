@@ -15,14 +15,14 @@
 
   @media screen and (min-width: 768px) {
     .codeland-content__container {
-      width: 1024px;
+      width: 100%;
       padding: var(--su-10) var(--su-4);
       margin: 0 auto;
       flex-wrap: nowrap;
     }
   }
 
-  @media screen and (min-width: 1024px) {
+  @media screen and (min-width: 1280px) {
     .codeland-content__container {
       width: var(--site-width);
     }
@@ -64,7 +64,7 @@
     display: none;
   }
 
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 640px) {
     .codeland-header__description {
       margin-left: var(--su-4);
       display: flex;
@@ -84,6 +84,7 @@
     grid-column-gap: var(--su-4);
     grid-row-gap: var(--su-4);
     grid-template-columns: 1fr;
+    grid-template-rows: 360px;
     margin: 0 auto;
     width: 100%;
     padding: 0 var(--su-4);
@@ -91,13 +92,21 @@
     grid-template-rows: auto;
   }
 
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 640px) {
     .codeland-livestream__container {
       grid-template-columns: 5fr 2fr;
+      grid-template-rows: 400px;
       height: fit-content;
+      width: 100%;
+    }
+  }
+
+  @media screen and (min-width: 1280px) {
+    .codeland-livestream__container {
       width: var(--site-width);
     }
   }
+
 
 
   #livestream-frame {
@@ -105,7 +114,7 @@
     width: 100%;
   }
 
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 640px) {
     #livestream-frame {
       height: 100%;
     }
@@ -113,9 +122,10 @@
 
   .codeland-livestream__speaker-info {
     order: 3;
+    overflow-x: scroll;
   }
 
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 640px) {
     .codeland-livestream__speaker-info {
       order: inherit;
     }
@@ -185,10 +195,16 @@
 
   .codeland-schedule__event {
     display: block;
-    margin-bottom: var(--su-4);
+    margin-bottom: var(--su-5);
   }
 
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 640px) {
+    .codeland-schedule__event {
+      margin-bottom: var(--su-4);
+    }
+  }
+
+  @media screen and (min-width: 640px) {
     .codeland-schedule__event {
       display: grid;
       grid-template-columns: 1fr 2fr 1fr;
@@ -199,6 +215,14 @@
 
   .codeland-schedule__event-metadata {
     font-family: var(--ff-accent);
+  }
+
+  .codeland-schedule__event-title {
+    text-decoration: underline;
+  }
+
+  .codeland-schedule__event-description {
+    opacity: 0.8;
   }
 
   /****** SPONSORS *******/
@@ -213,7 +237,7 @@
     height: 102%;
     left: -10vw;
     position: absolute;
-    top: -6px;
+    top: 0;
     transform: rotate(2deg);
     width: 120vw;
     z-index: -1;
@@ -222,8 +246,8 @@
   @media screen and (min-width: 768px) {
     #codeland-sponsors:before {
       transform: rotate(3deg);
-      top: -4%;
-      height: 104%;
+      top: -6px;
+      height: -webkit-fill-available;
     }
   }
 
@@ -239,7 +263,7 @@
     margin-bottom: var(--su-4);
   }
 
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 640px) {
     .codeland-sponsors__platinum {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -249,7 +273,7 @@
       height: 240px;
   }
 
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 640px) {
     .codeland-sponsors__platinum .codeland-sponsors__logo-wrapper {
         height: 320px;
     }
@@ -259,7 +283,7 @@
     grid-template-columns: 1fr;
   }
 
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 640px) {
     .codeland-sponsors__mentor {
       grid-template-columns: repeat(4, 1fr);
     }
@@ -271,13 +295,10 @@
     height: 240px;
   }
 
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 640px) {
     .codeland-sponsors__logo-wrapper {
       height: 160px;
     }
-  }
-
-  .codeland-sponsors__logo {
   }
 
   /****** SOCIAL CORNER *******/
@@ -325,17 +346,21 @@
 
   #codeland-career-fair:before {
     background: var(--base-inverted);
-    height: 115%;
     transform: rotate(-1deg);
     position: absolute;
     content: "";
     width: 120vw;
     left: -10vw;
     z-index: -2;
-    top: -8%;
+    top: 0;
+    height: 100%;
   }
 
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 640px) {
+    #codeland-career-fair:before {
+      height: 115%;
+      top: -8%;
+    }
   }
 
   .codeland-career-fair__body {
@@ -345,7 +370,7 @@
     grid-template-columns: 1fr;
   }
 
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 640px) {
     .codeland-career-fair__body {
       grid-template-columns: repeat(4, 1fr);
     }
@@ -401,7 +426,7 @@
 
       <aside class="codeland-livestream__speaker-info crayons-card">
         <div class="crayons-card__body">
-          <p class="mb-4">
+          <p class="mb-4 fs-base">
           <strong>Vaidehi Joshi</strong> is a senior engineer at DEV, where she builds community
             and helps improve the software careers of millions. She enjoys building
             and breaking code, but loves creating empathetic engineering teams a
@@ -440,14 +465,14 @@
         </h2>
       </header>
       <div class="codeland-schedule__event">
-        <div class="codeland-schedule__event-metadata fs-base">
+        <div class="codeland-schedule__event-metadata fs-s s:fs-base">
           10 AM - 10:20 AM UTC
         </div>
         <div class="codeland-schedule__event-info">
           <h3>
             Welcome Address
           </h3>
-          <p>
+          <p class="codeland-schedule__event-description fs-base m:fs-l">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
             ad minim veniam, quis nostrud exercitation t dolore magna aliqua. Ut
@@ -456,17 +481,17 @@
         </div>
       </div>
       <div class="codeland-schedule__event">
-        <div class="codeland-schedule__event-metadata fs-base">
+        <div class="codeland-schedule__event-metadata fs-s s:fs-base">
           10 AM - 10:20 AM UTC
         </div>
         <div class="codeland-schedule__event-info">
           <h3>
             Scott Hanselman (keynote)
           </h3>
-          <h4>
+          <h4 class="codeland-schedule__event-title">
             The History of Computer Science
           </h4>
-          <p>
+          <p class="codeland-schedule__event-description fs-base m:fs-l">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
             ad minim veniam, quis nostrud exercitation t dolore magna aliqua. Ut
@@ -475,17 +500,17 @@
         </div>
       </div>
       <div class="codeland-schedule__event">
-        <div class="codeland-schedule__event-metadata fs-base">
+        <div class="codeland-schedule__event-metadata fs-s s:fs-base">
           10 AM - 10:20 AM UTC
         </div>
         <div class="codeland-schedule__event-info">
           <h3>
             Gargi Sharma
           </h3>
-          <h4>
+          <h4 class="codeland-schedule__event-title">
             Printing floating point numbers is surprisingly hard!
           </h4>
-          <p>
+          <p class="codeland-schedule__event-description fs-base m:fs-l">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
             ad minim veniam, quis nostrud exercitation t dolore magna aliqua. Ut
@@ -494,17 +519,17 @@
         </div>
       </div>
       <div class="codeland-schedule__event">
-        <div class="codeland-schedule__event-metadata fs-base">
+        <div class="codeland-schedule__event-metadata fs-s s:fs-base">
           10 AM - 10:20 AM UTC
         </div>
         <div class="codeland-schedule__event-info">
           <h3>
             Brian Vermeer
           </h3>
-          <h4>
+          <h4 class="codeland-schedule__event-title">
             Live Exploiting Your OS Dependencies
           </h4>
-          <p>
+          <p class="codeland-schedule__event-description fs-base m:fs-l">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
             ad minim veniam, quis nostrud exercitation t dolore magna aliqua. Ut
