@@ -354,6 +354,37 @@
   /* Bigger screens  */
 </style>
 
+<script>
+const DATA_URL = "/page/codeland_data";
+const REFRESH_RATE = 15000;
+
+const sleep = time => new Promise(resolve => setTimeout(resolve, time));
+const poll = (promiseFn, time) => promiseFn()
+              .then(sleep(time)
+              .then(() => poll(promiseFn, time)));
+
+const fetchData = url => (
+  fetch(url)
+    .then((resp) => resp.json())
+    .then(function(data) {
+        updateTalkInfo(data.talk);
+    })
+    .catch(function(error) {
+        console.log(error);
+    })
+);
+
+// Update the contents of a div with new data
+const updateTalkInfo = talkData => {
+  document.querySelector('.codeland-livestream__info-title h2').textContent = `${talkData.title} by ${talkData.speaker}`;
+  document.querySelector('.codeland-livestream__speaker-info div p').textContent = talkData.bio;
+};
+
+// Main polling loop
+poll(() => fetchData(DATA_URL), REFRESH_RATE);
+
+</script>
+
 <div class="codeland-content">
 
     <div id="codeland-header">
