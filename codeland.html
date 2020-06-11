@@ -1,7 +1,7 @@
 <style>
   /****** BASE SETUP *******/
   .codeland-content {
-    background: var(--body-bg);
+    position: sticky;
     height: 100%;
   }
 
@@ -48,50 +48,54 @@
     margin: 0 auto;
     width: 100%;
     display: flex;
-    flex-direction: row;
+    align-items: center;
     justify-content: center;
+    flex-direction: column;
   }
 
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 640px) {
     .codeland-header__container {
       justify-content: left;
       margin: var(--su-4) auto;
       width: var(--site-width);
+      flex-direction: row;
     }
   }
 
-  /* .codeland-header__description { */
-  /*   display: none; */
-  /* } */
+  .codeland-header__description {
+    display: none;
+  }
 
   @media screen and (min-width: 640px) {
     .codeland-header__description {
-      margin-left: var(--su-4);
       display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .codeland-header__description.fixed {
+      margin-left: var(--su-4);
       flex-direction: column;
       justify-content: center;
       transition: var(--transition-props);
+      position: fixed;
+      top: var(--header-height);
+      background: white;
+      height: var(--header-height);
+      border-bottom: 1px solid var(--base-20);
+      margin-left: 0;
+      left: 0;
+      width: 100%;
+      z-index: 7;
     }
   }
 
-  .codeland-header__description.fixed {
-    position: fixed;
-    top: var(--header-height);
-    background: white;
-    height: var(--header-height);
-    border-bottom: 1px solid var(--base-20);
-    margin-left: 0;
-    left: 0;
-    width: 100%;
-    z-index: 7;
+  @media screen and (min-width: 640px) {
+    .codeland-header__description.fixed nav {
+      margin: 0 auto;
+      width: var(--site-width);
+    }
   }
-
-  .codeland-header__description.fixed nav {
-    margin: 0 auto;
-    width: var(--site-width);
-  }
-
-
 
   /****** LIVESTREAM *******/
 
@@ -429,20 +433,97 @@ poll(() => fetchData(DATA_URL), REFRESH_RATE);
 // Nav menu
 document.addEventListener("DOMContentLoaded", function() {
   const navContainer = document.querySelector('.codeland-header__description');
-  const navTop = navContainer.offsetTop;
+  const navMenu = document.querySelector('.codeland-nav');
+  const navTop = navMenu.offsetTop;
+ 
 
-  function stickyNav() {
-    console.log('navTop = ' + navTop);
-    console.log('scrollY = ' + window.scrollY);
+  const currentLocation = location.href;
 
+  const menuItem =
+    document.querySelector('.codeland-nav').querySelectorAll('a');
+  const menuLength = menuItem.length
+
+  // check initial menu position
+  function checkInitialMenuPosition() {
+    for (let i = 0; i < menuLength; i++) {
+      if (menuItem[i].href === currentLocation){
+        menuItem[i].classList.add('crayons-tabs__item--current');
+      }
+    }
+
+    if (window.scrollY >= navTop) {
+      navContainer.classList.add("fixed");
+    }
+  }
+
+  // toggle active menu when item is selected
+  menuItem.forEach(item => {
+    item.addEventListener('click', function() {
+      for (let i = 0; i < menuLength; i++) {
+        menuItem[i].classList.remove('crayons-tabs__item--current');
+      }
+
+      item.classList.add('crayons-tabs__item--current');
+    });
+  });
+
+  // dynamically update active menu item on scroll to section
+  var codelandLivestream = document.querySelector('#codeland-livestream');
+  var codelandSchedule = document.querySelector('#codeland-schedule');
+  var codelandSponsors = document.querySelector('#codeland-sponsors');
+  var codelandSocial = document.querySelector('#codeland-social-corner');
+  var codelandCareer = document.querySelector('#codeland-career-fair');
+
+  var codelandSections = [
+    codelandLivestream,
+    codelandSchedule,
+    codelandSponsors,
+    codelandSocial,
+    codelandCareer
+  ]
+
+  function updateItem() {
+    console.log(codelandSections);
+    console.log(codelandSections[0]);
+    console.log(codelandSections.length - 1);
+
+    for (let i = 0; i < (codelandSections.length - 1); i++) {
+      if ( (window.scrollY >= codelandSections[i].offsetTop) && (window.scrollY <=
+        (codelandSections[i].offsetTop + codelandSections[i].offsetHeight))) {
+
+        for (let i = 0; i < menuLength; i++) {
+          menuItem[i].classList.remove('crayons-tabs__item--current');
+        }
+
+        menuItem[i].classList.add('crayons-tabs__item--current');
+      }
+
+      if ( window.scrollY >= (codelandSections.slice(-1).pop().offsetTop - 200)) {
+        for (let i = 0; i < menuLength; i++) {
+          menuItem[i].classList.remove('crayons-tabs__item--current');
+        }
+
+        menuItem[4].classList.add('crayons-tabs__item--current');
+      }
+    }
+  };
+
+  // pin nav to top of page
+  function pinNav() {
     if (window.scrollY >= navTop) {
       navContainer.classList.add("fixed");
     } else {
       navContainer.classList.remove("fixed");
     }
-  }
 
-  window.addEventListener('scroll', stickyNav);
+    if (window.scrollY == navTop) {
+      navContainer.classList.remove("fixed");
+    }
+  };
+
+  window.addEventListener('load', checkInitialMenuPosition);
+  window.addEventListener('scroll', pinNav);
+  window.addEventListener('scroll', updateItem);
 });
 
 </script>
@@ -462,8 +543,8 @@ document.addEventListener("DOMContentLoaded", function() {
           </svg>
       </figure>
       <div class="codeland-header__description">
-        <nav class="crayons-tabs crayons-tabs--scrollable">
-          <a href="#" class="crayons-tabs__item crayons-tabs__item--current">
+        <nav class="codeland-nav crayons-tabs crayons-tabs--scrollable">
+          <a href="#" class="crayons-tabs__item">
             Livestream
           </a>
           <a href="#codeland-schedule" class="crayons-tabs__item">
