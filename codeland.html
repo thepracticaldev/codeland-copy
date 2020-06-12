@@ -487,7 +487,7 @@ const fetchData = url => (
 // Update the contents of a div with new data
 const updateTalkInfo = talkData => {
   document.querySelector('.codeland-livestream__info-title h2').textContent = `${talkData.title} by ${talkData.speaker}`;
-  document.querySelector('.codeland-livestream__speaker-info div p').textContent = talkData.bio;
+  document.querySelector('.codeland-livestream__speaker-info div p').innerHTML = talkData.bio;
   document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
 };
 
