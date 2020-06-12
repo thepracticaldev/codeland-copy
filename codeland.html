@@ -400,7 +400,7 @@
 
   /* Article sidecar */
 
-  .codeland-article-sidecar {
+  .codeland-sidecar {
     position: fixed;
     top: var(--header-height);
     right: 0;
@@ -410,35 +410,35 @@
     transition: var(--transition-props);
   }
 
-  .codeland-article-sidecar.showing {
+  .codeland-sidecar.showing {
     transform: initial;
   }
 
-  .codeland-article-sidecar > iframe {
+  .codeland-sidecar > iframe {
     height: 100%;
     border: none;
     box-shadow: -4px 0px 15px rgba(0, 0, 0, 0.1);
     width: 100vw;
   }
 
-  .codeland-article-sidecar > header {
+  .codeland-sidecar > header {
     background-color: var(--base-inverted);
     padding: var(--su-4) var(--su-4) 0;
     display: flex;
     flex-direction: column;
   }
-  .codeland-article-sidecar > header > h1 {
+  .codeland-sidecar > header > h1 {
     font-size: var(--fs-l);
     font-weight: var(--fw-bold);
   }
-  .codeland-article-sidecar > header > h2 {
+  .codeland-sidecar > header > h2 {
     font-size: var(--fs-base);
     font-weight: var(--fw-normal);
     color: var(--base-70);
     margin-bottom: 8px;
   }
 
-  .codeland-article-sidecar > header > button {
+  .codeland-sidecar > header > button {
     border-radius: 100%;
     border: none;
     width: 40px;
@@ -453,12 +453,12 @@
   }
 
   @media screen and (min-width: 640px) {
-    .codeland-article-sidecar {
+    .codeland-sidecar {
       transform: translateX(400px);
       transition: var(--transition-props);
     }
 
-    .codeland-article-sidecar > iframe {
+    .codeland-sidecar > iframe {
       width: 400px;
     }
   }
@@ -665,16 +665,18 @@ document.addEventListener("DOMContentLoaded", function() {
       </div>
     </div>
 
-    <div class="codeland-article-sidecar">
+    <div class="codeland-sidecar">
       <header>
-        <h1>Discussion Article</h1>
-        <h2>Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a></h2>
+        <h1></h1>
+        <h2></h2>
         <button type="button" title="Close Article Sidecar">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-labelledby="aolcet3wgdhqhxnku7e0iw8vrv7hs8gg"><title id="aolcet3wgdhqhxnku7e0iw8vrv7hs8gg">Close moderator actions panel</title>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-labelledby="aolcet3wgdhqhxnku7e0iw8vrv7hs8gg">
+            <title id="aolcet3wgdhqhxnku7e0iw8vrv7hs8gg">Close moderator actions panel</title>
             <path d="M13.172 12L8.22198 7.04999L9.63598 5.63599L16 12L9.63598 18.364L8.22198 16.95L13.172 12Z"></path>
           </svg>
         </button>
       </header>
+      <iframe src="about:blank" name="Codeland Sidecar"></iframe>
     </div>
   </section>
 
@@ -829,7 +831,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididuntV
               </p>
-              <button class="crayons-btn crayons-btn--secondary" type="button">
+              <button class="crayons-btn crayons-btn--secondary" type="button" data-url="http://localhost:3000/connect/watercooler-2afo">
                 Join
               </button>
             </div>
@@ -843,7 +845,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididuntV
               </p>
-              <button class="crayons-btn crayons-btn--secondary" type="button">
+              <button class="crayons-btn crayons-btn--secondary" type="button" data-url="http://localhost:3000/connect/watercooler-2afo">
                 Join
               </button>
             </div>
@@ -857,7 +859,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididuntV
               </p>
-              <button class="crayons-btn crayons-btn--secondary" type="button">
+              <button class="crayons-btn crayons-btn--secondary" type="button" data-url="http://localhost:3000/connect/watercooler-2afo">
                 Join
               </button>
             </div>
@@ -871,7 +873,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididuntV
               </p>
-              <button class="crayons-btn crayons-btn--secondary" type="button">
+              <button class="crayons-btn crayons-btn--secondary" type="button" data-url="http://localhost:3000/connect/watercooler-2afo">
                 Join
               </button>
             </div>
@@ -885,7 +887,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididuntV
               </p>
-              <button class="crayons-btn crayons-btn--secondary" type="button">
+              <button class="crayons-btn crayons-btn--secondary" type="button" data-url="http://localhost:3000/connect/watercooler-2afo">
                 Join
               </button>
             </div>
@@ -899,7 +901,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididuntV
               </p>
-              <button class="crayons-btn crayons-btn--secondary" type="button">
+              <button class="crayons-btn crayons-btn--secondary" type="button" data-url="http://localhost:3000/connect/watercooler-2afo">
                 Join
               </button>
             </div>
@@ -959,33 +961,51 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 
 <script>
-  const articleButt = document.querySelector('.codeland-livestream__speaker-info div button');
-  const closeButt = document.querySelector('.codeland-article-sidecar header button');
-  const sidecarDiv = document.querySelector('.codeland-article-sidecar');
+  const livestreamButt = document.querySelector('.codeland-livestream__speaker-info div button');
+  const closeButt = document.querySelector('.codeland-sidecar header button');
+  const sidecarDiv = document.querySelector('.codeland-sidecar');
+  const sidecarTitle = sidecarDiv.querySelector('header h1');
+  const sidecarSubtitle = sidecarDiv.querySelector('header h2');
+  const iframe = sidecarDiv.querySelector('iframe');
 
-  function removeSidecarIframe() {
-    const sidecarEmbed = sidecarDiv.querySelector('iframe');
-    if (sidecarEmbed !== null) {
-      sidecarDiv.removeChild(sidecarEmbed);
+  function presentSidecar(url, title, subtitle) {
+    if (!sidecarDiv.classList.contains('showing')) {
+      sidecarDiv.classList.toggle('showing');
     }
-  };
 
-  // EventListener to open the Article Sidecar
-  articleButt.addEventListener('click', () => {
-    if (sidecarDiv.classList.contains('showing')) { return }
+    if (iframe.src !== url) {
+      iframe.src = url;
+      iframe.title = title; // Accesibility
+      sidecarTitle.innerHTML = title;
+      sidecarSubtitle.innerHTML = subtitle;
+    }
+  }
 
-    // Create iframe using current discussion article
-    const sidecar = document.createElement("iframe");
-    sidecar.setAttribute("src", articleButt.dataset.url);
-
-    removeSidecarIframe();
-    sidecarDiv.appendChild(sidecar);
-    sidecarDiv.classList.toggle('showing');
+  // EventListener for Main CTA in Livestream section
+  livestreamButt.addEventListener('click', () => {
+    presentSidecar(
+      livestreamButt.dataset.url,
+      'Discussion Article',
+      'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>'
+    );
   });
 
-  // EventListener to hide the Article Sidecar
+  // EventListener to hide the Sidecar
   closeButt.addEventListener('click', () => {
-    removeSidecarIframe();
-    sidecarDiv.classList.toggle('showing');
+    if (sidecarDiv.classList.contains('showing')) {
+      sidecarDiv.classList.toggle('showing');
+    }
+  });
+
+  // EventListener for all Social Corner chat rooms
+  const socialCorner = document.getElementById('codeland-social-corner');
+  socialCorner.querySelectorAll('button').forEach(button => {
+    button.addEventListener('click', (event) => {
+      presentSidecar(
+        event.target.dataset.url,
+        'Social Corner',
+        'Powered by <a href="/connect" target="_blank">Connect</a>'
+      );
+    });
   });
 </script>
