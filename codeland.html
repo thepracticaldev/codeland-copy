@@ -153,6 +153,24 @@
     }
   }
 
+  .codeland-livestream__info-state {
+    color: var(--base-70);
+  }
+
+  .codeland-livestream__info-link {
+    color: var(--body-color);
+  }
+
+  .codeland-livestream__info-link:hover {
+    color: var(--link-brand-color);
+    fill: var(--link-brand-color);
+  }
+
+  .codeland-livestream__info-link:hover .codeland-livestream__info-title,
+  .codeland-livestream__info-link:hover .codeland-livestream__info-helper span {
+    text-decoration: underline;
+  }
+
   .codeland-livestream__info-title {
     display: block;
     width: 100%;
@@ -164,14 +182,14 @@
       justify-content: space-between;
     }
   }
-
-  .codeland-livestream__info-helper {
+.codeland-livestream__info-helper {
     display: none;
   }
 
   @media screen and (min-width: 768px) {
     .codeland-livestream__info-helper {
-      display: inherit;
+      display: flex;
+      align-items: center;
     }
   }
 
@@ -678,19 +696,24 @@ document.addEventListener("DOMContentLoaded", function() {
           </button>
         </div>
       </aside>
-      <div class="codeland-livestream__info">
-        <span class="ff-accent fs-base">
-          Currently
-        </span>
-        <div class="codeland-livestream__info-title">
-          <h2>
-            The Cost of Data by Vaidehi Joshi
-          </h2>
-          <h2 class="codeland-livestream__info-helper fw-normal">
-            View Info
-          </h2>
+      <a href="" class="codeland-livestream__info-link">
+        <div class="codeland-livestream__info">
+          <span class="codeland-livestream__info-state ff-accent fs-base">
+            Currently
+          </span>
+          <div class="codeland-livestream__info-title">
+            <h2>
+              The Cost of Data by Vaidehi Joshi
+            </h2>
+            <h2 class="codeland-livestream__info-helper fw-normal">
+              <span>
+                View Info
+              </span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32"><path fill="none" d="M0 0h24v24H0z"/><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"/></svg>
+            </h2>
+          </div>
         </div>
-      </div>
+      </a>
     </div>
 
     <div class="codeland-sidecar">
