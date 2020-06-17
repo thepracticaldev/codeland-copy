@@ -359,6 +359,28 @@
     }
   }
 
+  .codeland-sponsors__logo-wrapper {
+    position: relative;
+    display: flex;
+    background: red;
+    width: 100%;
+    height: 240px;
+    transition: all var(--transition-props);
+  }
+
+
+  .codeland-sponsors__logo-wrapper:hover:after {
+    align-items: center;
+    background: rgba(0,0,0,0.15);
+    color: var(--base-inverted);
+    content: "View booth";
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+  }
+
   .codeland-sponsors__platinum .codeland-sponsors__logo-wrapper {
       height: 240px;
   }
@@ -377,12 +399,6 @@
     .codeland-sponsors__mentor {
       grid-template-columns: repeat(4, 1fr);
     }
-  }
-
-  .codeland-sponsors__logo-wrapper {
-    background: red;
-    width: 100%;
-    height: 240px;
   }
 
   @media screen and (min-width: 640px) {
@@ -875,24 +891,16 @@ document.addEventListener("DOMContentLoaded", function() {
       </div>
       <div class="codeland-sponsors__mentor">
         <a href="" class="codeland-sponsors__logo-wrapper">
-          <figure>
-            <img class="codeland-sponsors__logo" src="" />
-          </figure>
+          <img class="codeland-sponsors__logo" src="" />
         </a>
         <a href="" class="codeland-sponsors__logo-wrapper">
-          <figure>
-            <img class="codeland-sponsors__logo" src="" />
-          </figure>
+          <img class="codeland-sponsors__logo" src="" />
         </a>
         <a href="" class="codeland-sponsors__logo-wrapper">
-          <figure>
-            <img class="codeland-sponsors__logo" src="" />
-          </figure>
+          <img class="codeland-sponsors__logo" src="" />
         </a>
         <a href="" class="codeland-sponsors__logo-wrapper">
-          <figure>
-            <img class="codeland-sponsors__logo" src="" />
-          </figure>
+          <img class="codeland-sponsors__logo" src="" />
         </a>
       </div>
     </div>
