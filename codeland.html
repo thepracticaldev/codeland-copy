@@ -3,6 +3,7 @@
   .codeland-content {
     position: sticky;
     height: 100%;
+    overflow-x: hidden;
   }
 
   .codeland-content__container {
@@ -123,6 +124,12 @@
     }
   }
 
+  @media screen and (min-width: 1024px) {
+    .codeland-livestream__container {
+      grid-template-rows: 500px;
+    }
+  }
+
   @media screen and (min-width: 1280px) {
     .codeland-livestream__container {
       width: var(--site-width);
@@ -144,13 +151,28 @@
 
   .codeland-livestream__speaker-info {
     order: 3;
-    overflow-x: scroll;
+    overflow-y: scroll;
+    position: relative;
   }
 
   @media screen and (min-width: 640px) {
     .codeland-livestream__speaker-info {
       order: inherit;
     }
+  }
+
+  .codeland-livestream__speaker-info__footer {
+    background: var(--base-inverted);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: var(--su-3);
+    box-shadow: 0 -1px 1px var(--header-shadow);
   }
 
   .codeland-livestream__info-state {
@@ -691,9 +713,11 @@ document.addEventListener("DOMContentLoaded", function() {
             systems. She also co-hosts the Base.cs Podcast, and is a producer of the
             BaseCS and Byte Sized video series.
           </p>
-          <button class="crayons-btn crayons-btn--secondary" type="button" data-url="">
-            See discussion
-          </button>
+          <div class="codeland-livestream__speaker-info__footer">
+            <button class="crayons-btn crayons-btn--secondary w-100" type="button" data-url="">
+              See discussion
+            </button>
+          </div>
         </div>
       </aside>
       <a href="" class="codeland-livestream__info-link">
