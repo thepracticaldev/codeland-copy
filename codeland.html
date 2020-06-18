@@ -676,7 +676,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 </script>
 
-<div class="codeland-content">
+<div class="codeland-content" data-no-instant>
   <header id="codeland-header">
     <div class="codeland-header__container">
       <figure>
@@ -1070,7 +1070,13 @@ document.addEventListener("DOMContentLoaded", function() {
   let articleRefreshId = null;
   let articleCommentCount = -1;
 
-  const presentSidecar = (url, title, subtitle, watchComments = false) => {
+  const presentSidecar = (url, title, subtitle, watchComments = true) => {
+    var userStatus = document.body.getAttribute('data-user-status');
+    if (userStatus === 'logged-out') {
+      window.open(url, '_blank');
+      return;
+    }
+
     if (!sidecarDiv.classList.contains('showing')) {
       sidecarDiv.classList.toggle('showing');
     }
@@ -1098,8 +1104,7 @@ document.addEventListener("DOMContentLoaded", function() {
     presentSidecar(
       livestreamButt.dataset.url,
       'Discussion Article',
-      'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>',
-      true
+      'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>'
     );
   });
 
@@ -1110,19 +1115,46 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
-  // EventListener for all Social Corner chat rooms
+  // Reusable Event Callbacks for each section
+  const socialCornerClick = (event) => {
+    presentSidecar(
+      event.target.dataset.url,
+      'Social Corner',
+      'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>',
+      false
+    );
+  }
+  const scheduleClick = (event) => {
+    event.preventDefault();
+    presentSidecar(
+      event.target.href,
+      'Discussion Article',
+      'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>'
+    );
+  }
+  const sponsorBoothClick = (event) => {
+    event.preventDefault();
+    presentSidecar(
+      event.target.href,
+      'Sponsor booth',
+      'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>'
+    );
+  }
+
+  // Adds EventListeners to links in each section
   const socialCorner = document.getElementById('codeland-social-corner');
   socialCorner.querySelectorAll('button').forEach(button => {
-    button.addEventListener('click', (event) => {
-      presentSidecar(
-        event.target.dataset.url,
-        'Social Corner',
-        'Powered by <a href="/connect" target="_blank">Connect</a>'
-      );
-    });
+    button.addEventListener('click', socialCornerClick);
+  });
+  document.querySelectorAll('.codeland-schedule__event-link').forEach(link => {
+    link.addEventListener('click', scheduleClick);
+  });
+  document.querySelectorAll('.codeland-sponsors__logo-wrapper').forEach(link => {
+    link.addEventListener('click', sponsorBoothClick);
   });
 
-  // Comments come in a tree structure so this method recursively counts them
+
+  // Comments come in a tree structure so this method counts them recursively
   const checkCommentCount = (obj) => {
     if (Array.isArray(obj)) {
       return obj.reduce((total, comment) => total + checkCommentCount(comment), 0);
