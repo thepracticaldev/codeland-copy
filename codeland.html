@@ -676,7 +676,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 </script>
 
-<div class="codeland-content">
+<div class="codeland-content" data-no-instant>
   <header id="codeland-header">
     <div class="codeland-header__container">
       <figure>
@@ -1066,9 +1066,29 @@ document.addEventListener("DOMContentLoaded", function() {
   const sidecarSubtitle = sidecarDiv.querySelector('header h2');
   const iframe = sidecarDiv.querySelector('iframe');
 
-  function presentSidecar(url, title, subtitle) {
+  const COMMENT_REFRESH_RATE = 45000;
+  let articleRefreshId = null;
+  let articleCommentCount = -1;
+
+  const presentSidecar = (url, title, subtitle, watchComments = true) => {
+    var userStatus = document.body.getAttribute('data-user-status');
+    if (userStatus === 'logged-out') {
+      window.open(url, '_blank');
+      return;
+    }
+
     if (!sidecarDiv.classList.contains('showing')) {
       sidecarDiv.classList.toggle('showing');
+    }
+
+    if (watchComments) {
+      iframe.onload = () => {
+        articleRefreshId = iframe.contentDocument.getElementById('article-body').dataset.articleId;
+      }
+    } else {
+      articleRefreshId = null;
+      articleCommentCount = -1;
+      iframe.onload = null;
     }
 
     if (iframe.src !== url) {
@@ -1095,15 +1115,73 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
-  // EventListener for all Social Corner chat rooms
+  // Reusable Event Callbacks for each section
+  const socialCornerClick = (event) => {
+    presentSidecar(
+      event.target.dataset.url,
+      'Social Corner',
+      'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>',
+      false
+    );
+  }
+  const scheduleClick = (event) => {
+    event.preventDefault();
+    presentSidecar(
+      event.target.href,
+      'Discussion Article',
+      'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>'
+    );
+  }
+  const sponsorBoothClick = (event) => {
+    event.preventDefault();
+    presentSidecar(
+      event.target.href,
+      'Sponsor booth',
+      'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>'
+    );
+  }
+
+  // Adds EventListeners to links in each section
   const socialCorner = document.getElementById('codeland-social-corner');
   socialCorner.querySelectorAll('button').forEach(button => {
-    button.addEventListener('click', (event) => {
-      presentSidecar(
-        event.target.dataset.url,
-        'Social Corner',
-        'Powered by <a href="/connect" target="_blank">Connect</a>'
-      );
-    });
+    button.addEventListener('click', socialCornerClick);
   });
+  document.querySelectorAll('.codeland-schedule__event-link').forEach(link => {
+    link.addEventListener('click', scheduleClick);
+  });
+  document.querySelectorAll('.codeland-sponsors__logo-wrapper').forEach(link => {
+    link.addEventListener('click', sponsorBoothClick);
+  });
+
+
+  // Comments come in a tree structure so this method counts them recursively
+  const checkCommentCount = (obj) => {
+    if (Array.isArray(obj)) {
+      return obj.reduce((total, comment) => total + checkCommentCount(comment), 0);
+    } else if (obj.children != undefined && obj.children.length > 0) {
+      return 1 + checkCommentCount(obj.children);
+    } else {
+      return 1;
+    }
+  }
+
+  const checkUpdatedComments = () => {
+    if (articleRefreshId === null) {
+      return Promise.resolve();
+    }
+
+    return fetch(`/api/comments?a_id=${articleRefreshId}`)
+      .then((resp) => resp.json())
+      .then(function(data) {
+          let newCount = checkCommentCount(data);
+          // The first time we fetch the comment count we don't want a refresh hence the -1 check :)
+          if (articleCommentCount > -1 && newCount !== articleCommentCount) {
+            iframe.contentDocument.location.reload(true)
+          }
+          articleCommentCount = newCount;
+      })
+  }
+
+  // Article comment sync polling loop
+  poll(() => checkUpdatedComments(), COMMENT_REFRESH_RATE);
 </script>
