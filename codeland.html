@@ -968,9 +968,23 @@ document.addEventListener("DOMContentLoaded", function() {
   const sidecarSubtitle = sidecarDiv.querySelector('header h2');
   const iframe = sidecarDiv.querySelector('iframe');
 
-  function presentSidecar(url, title, subtitle) {
+  const COMMENT_REFRESH_RATE = 45000;
+  let articleRefreshId = null;
+  let articleCommentCount = -1;
+
+  const presentSidecar = (url, title, subtitle, watchComments = false) => {
     if (!sidecarDiv.classList.contains('showing')) {
       sidecarDiv.classList.toggle('showing');
+    }
+
+    if (watchComments) {
+      iframe.onload = function() {
+        articleRefreshId = iframe.contentDocument.getElementById('article-body').dataset.articleId;
+      }
+    } else {
+      articleRefreshId = null;
+      articleCommentCount = -1;
+      iframe.onload = null;
     }
 
     if (iframe.src !== url) {
@@ -986,7 +1000,8 @@ document.addEventListener("DOMContentLoaded", function() {
     presentSidecar(
       livestreamButt.dataset.url,
       'Discussion Article',
-      'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>'
+      'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>',
+      true
     );
   });
 
@@ -1008,4 +1023,34 @@ document.addEventListener("DOMContentLoaded", function() {
       );
     });
   });
+
+  const checkCommentCount = (obj) => {
+    if (Array.isArray(obj)) {
+      return obj.reduce((acumulator, comment) => acumulator + checkCommentCount(comment), 0);
+    } else {
+      return 1 + obj.children.reduce((acumulator, comment) => acumulator + checkCommentCount(obj.children), 0);
+    }
+  }
+
+  const checkUpdatedComments = () => {
+    if (articleRefreshId === null) {
+      return Promise.resolve();
+    }
+
+    return fetch(`/api/comments?a_id=${articleRefreshId}`)
+      .then((resp) => resp.json())
+      .then(function(data) {
+          let newCount = checkCommentCount(data);
+          // The first time we fetch the comment count we don't want a refresh
+          // hence the -1 check :)
+          if (articleCommentCount > -1 && newCount !== articleCommentCount) {
+            iframe.contentDocument.location.reload(true)
+          }
+          articleCommentCount = newCount;
+          console.log("Count", articleCommentCount);
+      })
+  }
+
+  // Article comment sync polling loop
+  poll(() => checkUpdatedComments(), COMMENT_REFRESH_RATE);
 </script>
