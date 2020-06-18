@@ -315,6 +315,10 @@
     opacity: 0.6;
   }
 
+  .codeland-schedule__event-speaker-bio {
+    display: none;
+  }
+
   /****** SPONSORS *******/
 
   #codeland-sponsors {
@@ -595,15 +599,23 @@ const updateScheduleInfo = scheduleData => {
   var listing_container = document.querySelector('.codeland-content__container');
   var template = document.querySelector('#schedule-entry-template');
   scheduleData.forEach(data => {
+    var start_time = new Date(Date.parse(data.start_time));
+    var end_time = new Date(Date.parse(data.end_time));
+
     var listing = template.content.cloneNode(true);
+    listing.querySelector('.codeland-schedule__event').setAttribute("data-event-id", data.id);
+    listing.querySelector('.codeland-schedule__event-metadata').innerHTML = `${start_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${end_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} `;
+    listing.querySelector('.codeland-schedule__event-info h3').innerHTML = data.speaker;
     listing.querySelector('.codeland-schedule__event-title').innerHTML = data.title;
+    listing.querySelector('.codeland-schedule__event-speaker-bio').innerHTML = data.bio;
     listing_container.append(listing);
   });
 }
 
 // Main polling loop
-poll(() => fetchNowPlayingData(NOW_PLAYING_DATA_URL), NOW_PLAYING_REFRESH_RATE);
 poll(() => fetchScheduleData(SCHEDULE_DATA_URL), SCHEDULE_REFRESH_RATE);
+poll(() => fetchNowPlayingData(NOW_PLAYING_DATA_URL), NOW_PLAYING_REFRESH_RATE);
+
 
 // Nav menu
 document.addEventListener("DOMContentLoaded", function() {
@@ -801,94 +813,6 @@ document.addEventListener("DOMContentLoaded", function() {
           Schedule & agenda
         </h2>
       </header>
-      <div class="codeland-schedule__event">
-        <div class="codeland-schedule__event-metadata fs-s s:fs-base">
-          10 AM - 10:20 AM UTC
-        </div>
-        <div class="codeland-schedule__event-info">
-          <h3>
-            Welcome Address
-          </h3>
-          <p class="codeland-schedule__event-description fs-base m:fs-l">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation t dolore magna aliqua. Ut
-            enim ad minim veniam, quis nostrud exercitation  
-          </p>
-        </div>
-      </div>
-      <a href="" class="codeland-schedule__event-link">
-        <div class="codeland-schedule__event">
-          <div class="codeland-schedule__event-metadata fs-s s:fs-base">
-            10 AM - 10:20 AM UTC
-          </div>
-          <div class="codeland-schedule__event-info">
-            <h3>
-              Scott Hanselman (keynote)
-            </h3>
-            <h4 class="codeland-schedule__event-title">
-              The History of Computer Science
-            </h4>
-            <p class="codeland-schedule__event-description fs-base m:fs-l">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-              ad minim veniam, quis nostrud exercitation t dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation  
-            </p>
-          </div>
-          <div class="codeland-schedule__event-view-link">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"/><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"/></svg>
-          </div>
-        </div>
-      </a>
-      <a href="" class="codeland-schedule__event-link">
-        <div class="codeland-schedule__event">
-          <div class="codeland-schedule__event-metadata fs-s s:fs-base">
-            10 AM - 10:20 AM UTC
-          </div>
-          <div class="codeland-schedule__event-info">
-            <h3>
-              Gargi Sharma
-            </h3>
-            <h4 class="codeland-schedule__event-title">
-              Printing floating point numbers is surprisingly hard!
-            </h4>
-            <p class="codeland-schedule__event-description fs-base m:fs-l">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-              ad minim veniam, quis nostrud exercitation t dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation  
-            </p>
-          </div>
-          <div class="codeland-schedule__event-view-link">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"/><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"/></svg>
-          </div>
-        </div>
-      </a>
-      <a href="" class="codeland-schedule__event-link">
-        <div class="codeland-schedule__event">
-          <div class="codeland-schedule__event-metadata fs-s s:fs-base">
-            10 AM - 10:20 AM UTC
-          </div>
-          <div class="codeland-schedule__event-info">
-            <h3>
-              Brian Vermeer
-            </h3>
-            <h4 class="codeland-schedule__event-title">
-              Live Exploiting Your OS Dependencies
-            </h4>
-            <p class="codeland-schedule__event-description fs-base m:fs-l">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-              ad minim veniam, quis nostrud exercitation t dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation  
-            </p>
-          </div>
-          <div class="codeland-schedule__event-view-link">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"/><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"/></svg>
-          </div>
-        </div>
-      </a>
     </div>
   </section>
 
@@ -1082,14 +1006,25 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 
 <template id="schedule-entry-template">
-  <div class="codeland-schedule__event">
-    <div class="codeland-schedule__event-metadata fs-s s:fs-base"></div>
-    <div class="codeland-schedule__event-info">
-      <h3></h3>
-      <h4 class="codeland-schedule__event-title"></h4>
-      <p class="codeland-schedule__event-description fs-base m:fs-l"></p>
+  <a href="" class="codeland-schedule__event-link">
+    <div class="codeland-schedule__event" data-event-id="">
+      <div class="codeland-schedule__event-metadata fs-s s:fs-base">
+        10 AM - 10:20 AM UTC
+      </div>
+      <div class="codeland-schedule__event-info">
+        <h3>
+          Gargi Sharma
+        </h3>
+        <h4 class="codeland-schedule__event-title">
+          Printing floating point numbers is surprisingly hard!
+        </h4>
+        <div class="codeland-schedule__event-speaker-bio"></div>
+      </div>
+      <div class="codeland-schedule__event-view-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"/><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"/></svg>
+      </div>
     </div>
-  </div>
+  </a>
 </template>
 
 <script>
