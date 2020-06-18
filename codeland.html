@@ -549,19 +549,32 @@
 </style>
 
 <script>
-const DATA_URL = "/page/codeland_data";
-const REFRESH_RATE = 15000;
+const NOW_PLAYING_DATA_URL = "/page/codeland_now_playing";
+const NOW_PLAYING_REFRESH_RATE = 15000;
+const SCHEDULE_DATA_URL = "/page/codeland_schedule";
+const SCHEDULE_REFRESH_RATE = 120000;
 
 const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 const poll = (promiseFn, time) => promiseFn()
               .then(sleep(time)
               .then(() => poll(promiseFn, time)));
 
-const fetchData = url => (
+const fetchNowPlayingData = url => (
   fetch(url)
     .then((resp) => resp.json())
     .then(function(data) {
-        updateTalkInfo(data.talk);
+        updateTalkInfo(data.now_playing);
+    })
+    .catch(function(error) {
+        console.log(error);
+    })
+);
+
+const fetchScheduleData = url => (
+  fetch(url)
+    .then((resp) => resp.json())
+    .then(function(data) {
+        updateScheduleInfo(data.schedule);
     })
     .catch(function(error) {
         console.log(error);
@@ -575,8 +588,22 @@ const updateTalkInfo = talkData => {
   document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
 };
 
+const updateScheduleInfo = scheduleData => {
+  document.querySelectorAll('.codeland-content__container .codeland-schedule__event').forEach(element => {
+    element.remove();
+  });
+  var listing_container = document.querySelector('.codeland-content__container');
+  var template = document.querySelector('#schedule-entry-template');
+  scheduleData.forEach(data => {
+    var listing = template.content.cloneNode(true);
+    listing.querySelector('.codeland-schedule__event-title').innerHTML = data.title;
+    listing_container.append(listing);
+  });
+}
+
 // Main polling loop
-poll(() => fetchData(DATA_URL), REFRESH_RATE);
+poll(() => fetchNowPlayingData(NOW_PLAYING_DATA_URL), NOW_PLAYING_REFRESH_RATE);
+poll(() => fetchScheduleData(SCHEDULE_DATA_URL), SCHEDULE_REFRESH_RATE);
 
 // Nav menu
 document.addEventListener("DOMContentLoaded", function() {
@@ -631,10 +658,6 @@ document.addEventListener("DOMContentLoaded", function() {
   ]
 
   function updateItem() {
-    console.log(codelandSections);
-    console.log(codelandSections[0]);
-    console.log(codelandSections.length - 1);
-
     for (let i = 0; i < (codelandSections.length - 1); i++) {
       if ( (window.scrollY >= codelandSections[i].offsetTop) && (window.scrollY <=
         (codelandSections[i].offsetTop + codelandSections[i].offsetHeight))) {
@@ -1057,6 +1080,17 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
   </section>
 </div>
+
+<template id="schedule-entry-template">
+  <div class="codeland-schedule__event">
+    <div class="codeland-schedule__event-metadata fs-s s:fs-base"></div>
+    <div class="codeland-schedule__event-info">
+      <h3></h3>
+      <h4 class="codeland-schedule__event-title"></h4>
+      <p class="codeland-schedule__event-description fs-base m:fs-l"></p>
+    </div>
+  </div>
+</template>
 
 <script>
   const livestreamButt = document.querySelector('.codeland-livestream__speaker-info div button');
