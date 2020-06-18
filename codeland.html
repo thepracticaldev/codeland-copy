@@ -978,7 +978,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     if (watchComments) {
-      iframe.onload = function() {
+      iframe.onload = () => {
         articleRefreshId = iframe.contentDocument.getElementById('article-body').dataset.articleId;
       }
     } else {
@@ -1024,11 +1024,14 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 
+  // Comments come in a tree structure so this method recursively counts them
   const checkCommentCount = (obj) => {
     if (Array.isArray(obj)) {
-      return obj.reduce((acumulator, comment) => acumulator + checkCommentCount(comment), 0);
+      return obj.reduce((total, comment) => total + checkCommentCount(comment), 0);
+    } else if (obj.children != undefined && obj.children.length > 0) {
+      return 1 + checkCommentCount(obj.children);
     } else {
-      return 1 + obj.children.reduce((acumulator, comment) => acumulator + checkCommentCount(obj.children), 0);
+      return 1;
     }
   }
 
@@ -1041,13 +1044,11 @@ document.addEventListener("DOMContentLoaded", function() {
       .then((resp) => resp.json())
       .then(function(data) {
           let newCount = checkCommentCount(data);
-          // The first time we fetch the comment count we don't want a refresh
-          // hence the -1 check :)
+          // The first time we fetch the comment count we don't want a refresh hence the -1 check :)
           if (articleCommentCount > -1 && newCount !== articleCommentCount) {
             iframe.contentDocument.location.reload(true)
           }
           articleCommentCount = newCount;
-          console.log("Count", articleCommentCount);
       })
   }
 
