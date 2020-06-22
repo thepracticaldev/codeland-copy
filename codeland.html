@@ -558,6 +558,8 @@ const NOW_PLAYING_REFRESH_RATE = 15000;
 const SCHEDULE_DATA_URL = "/page/codeland_schedule";
 const SCHEDULE_REFRESH_RATE = 120000;
 
+var scheduleData;
+
 const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 const poll = (promiseFn, time) => promiseFn()
               .then(sleep(time)
@@ -567,7 +569,7 @@ const fetchNowPlayingData = url => (
   fetch(url)
     .then((resp) => resp.json())
     .then(function(data) {
-        updateTalkInfo(data.now_playing);
+        updateTalkInfo(data.now_playing.talk_id);
     })
     .catch(function(error) {
         console.log(error);
@@ -578,7 +580,8 @@ const fetchScheduleData = url => (
   fetch(url)
     .then((resp) => resp.json())
     .then(function(data) {
-        updateScheduleInfo(data.schedule);
+        scheduleData = data.schedule;
+        updateScheduleInfo(scheduleData);
     })
     .catch(function(error) {
         console.log(error);
@@ -586,7 +589,9 @@ const fetchScheduleData = url => (
 );
 
 // Update the contents of a div with new data
-const updateTalkInfo = talkData => {
+const updateTalkInfo = talkId => {
+  talkData = scheduleData.find(element => element.id === talkId);
+
   document.querySelector('.codeland-livestream__info-title h2').textContent = `${talkData.title} by ${talkData.speaker}`;
   document.querySelector('.codeland-livestream__speaker-info div p').innerHTML = talkData.bio;
   document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
@@ -611,6 +616,9 @@ const updateScheduleInfo = scheduleData => {
     listing_container.append(listing);
   });
 }
+
+//one time initial data load
+fetchScheduleData(SCHEDULE_DATA_URL);
 
 // Main polling loop
 poll(() => fetchScheduleData(SCHEDULE_DATA_URL), SCHEDULE_REFRESH_RATE);
