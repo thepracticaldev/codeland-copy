@@ -1,0 +1,22 @@
+{
+  "schedule": [
+    {
+      "id": 1,
+      "start_time": "July 23, 2020 10:00:00 UTC",
+      "end_time": "July 23, 2020 10:20:00 UTC",
+      "speaker": "Vaidehi Joshi",   
+      "title": "The Cost of Data",   
+      "bio": "<strong>Vaidehi Joshi</strong> is a senior engineer at DEV, where she builds community and helps improve the software careers of millions. She enjoys building and breaking code, but loves creating empathetic engineering teams a whole lot more. She is the creator of basecs and baseds, two writing series exploring the fundamentals of computer science and distributed systems. She also co-hosts the Base.cs Podcast, and is a producer of the BaseCS and Byte Sized video series.",
+      "url": "https://dev.to/discussion-article"
+    },
+    {
+      "id": 1,
+      "start_time": "July 23, 2020 10:20:00 UTC",
+      "end_time": "July 23, 2020 10:40:00 UTC",
+      "speaker": "Scott Hanselman",   
+      "title": "Keynote",   
+      "bio": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation t dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation",
+      "url": "https://dev.to/discussion-article"
+    }
+  ]
+}

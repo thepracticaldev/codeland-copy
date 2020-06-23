@@ -4,7 +4,9 @@ _codeland.html_: code for the main CodeLand landing page
 
 _banner.html_: code for the home page hero banner 
 
-_data.json_: sample data format for dynamic data updates on _codeland.html_
+codeland_now_playing.json_: sample data format for dynamic data updates on _codeland.html_
+
+codeland_schedule.json_: sample data for the programming schedule on _codeland.html_ 
 
 _display_ad.html_: code for the display ad/sidebar section on the homepage
 
