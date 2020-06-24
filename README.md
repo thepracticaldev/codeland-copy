@@ -10,4 +10,5 @@ codeland_schedule.json_: sample data for the programming schedule on _codeland.h
 
 _display_ad.html_: code for the display ad/sidebar section on the homepage
 
+_sample_schedule.rb_: small utility to generate sample schedule json
 
