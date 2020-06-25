@@ -267,6 +267,11 @@
     transform: translateX(0);
   }
 
+  .codeland-schedule__event-now-playing {
+    background: green;
+  }
+
+
   @media screen and (min-width: 768px) {
 
     .codeland-schedule__event-link:hover .codeland-schedule__event-view-link {
@@ -597,6 +602,12 @@ const updateTalkInfo = talkId => {
   document.querySelector('.codeland-livestream__info-title h2').textContent = `${talkData.title} by ${talkData.speaker}`;
   document.querySelector('.codeland-livestream__speaker-info div p').innerHTML = talkData.bio;
   document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
+
+  var currentNowPlaying = document.querySelector('.codeland-schedule__event-now-playing')
+  if(currentNowPlaying) {
+    currentNowPlaying.classList.remove('codeland-schedule__event-now-playing');
+  };
+  document.getElementById(`talk-${talkId}`).classList.add('codeland-schedule__event-now-playing');
 };
 
 const updateScheduleInfo = scheduleData => {
@@ -610,7 +621,7 @@ const updateScheduleInfo = scheduleData => {
     var end_time = new Date(Date.parse(data.end_time));
 
     var listing = template.content.cloneNode(true);
-    listing.querySelector('.codeland-schedule__event').setAttribute("data-event-id", data.id);
+    listing.querySelector('.codeland-schedule__event').id = `talk-${data.id}`;
     listing.querySelector('.codeland-schedule__event-metadata').innerHTML = `${start_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${end_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} `;
     listing.querySelector('.codeland-schedule__event-info h3').innerHTML = data.speaker;
     listing.querySelector('.codeland-schedule__event-title').innerHTML = data.title;
@@ -1018,7 +1029,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <template id="schedule-entry-template">
   <a href="" class="codeland-schedule__event-link">
-    <div class="codeland-schedule__event" data-event-id="">
+    <div class="codeland-schedule__event" id="">
       <div class="codeland-schedule__event-metadata fs-s s:fs-base">
         10 AM - 10:20 AM UTC
       </div>
