@@ -1,42 +1,68 @@
 <!-- the div id 'js-hero-banner' is required for this to be properly included on the homepage! -->
-<div id="js-hero-banner" class="codeland-banner">
-  <!-- Not sure if the style must be in the div, but since it is include on the hompage seems safe -->
-  <style> 
+
+<style>
+  .codeland-banner {
+    background: linear-gradient(45deg, #FED602, #B6FDAA, #87CAD3, #FEA0D6);
+    box-shadow: 0 0 0 1px var(--card-border);
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  @media screen and (min-width: 640px) {
     .codeland-banner {
-      background-color: #E5E5E5;
-      height: 100%;
-      padding-top: 30px;
+      min-height: 320px;
+      border-radius: var(--radius);
     }
+  }
 
-    .codeland-banner-row {
-      width: 100%;
-      padding: 0;
-      margin-top: 25px;
-      flex-wrap: wrap;
-    }
+  .codeland-banner__logo {
+    display: flex;
+    align-items: center;
+  }
 
-    .codeland-banner-text {
-      max-width: 650px;
-      font-size: 24px;
-      line-height: 32px;
-      margin: -16px 0 16px 0;
-      font-weight: 500;
-    }
+  .codeland-banner__logo img {
+    max-width: 100%;
+  }
 
-  </style>
+  .codeland-banner__description {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 
-  <div class="codeland-banner">
-    <div class="codeland-banner-row">
-      <div class="codeland-banner-text">
-        Welcome to CodeLand: Distributed 2020!
+  .codeland-banner__close-btn {
+    position: absolute;
+    top: var(--su-3);
+    right: var(--su-3);
+    width: 40px;
+    height: 40px;
+  }
+</style>
+
+<div id="js-hero-banner" class="codeland-banner-container">
+  <section class="crayons-layout">
+    <div class="codeland-banner crayons-layout crayons-layout--3-cols crayons-layout--3-cols--drop-right-left p-4 h-auto">
+
+      <a href="" class="crayons-btn crayons-btn--icon-rounded crayons-btn--ghost codeland-banner__close-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" width="24" height="24" classname="crayons-icon">
+          <path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95      4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636l4.95 4.95z"></path>
+        </svg>
+      </a>
+
+      <div class="codeland-banner__logo crayons-layout__sidebar-left">
+        <img src="https://dev-to-uploads.s3.amazonaws.com/i/xm46lif0lu22k1bk4cqc.png" alt="CodeLand Distributed Logo">
       </div>
-      <div>
-        <iframe id="livestream" src="https://www.youtube.com/embed/y7e-GC6oGhg?&autoplay=1controls=0&rel=0&mute=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe>
+
+      <div class="codeland-banner__description crayons-layout__content">
+        <p class="ff-accent">
+          July 23, 2020 - July 24, 2020
+        </p>
+        <h1 class="lh-tight fw-medium mb-3 fs-3xl s:fs-4xl ">
+          CodeLand is the community-first conference designed to level you up.
+        </h1>
+        <a href="/codeland" class="crayons-btn w-100 s:w-max">Watch livestream</a>
       </div>
-      <div>
-        <a href="/codeland"><div class="codeland-button-text">Click here to join in now.</div></a>
-      </div>
-      </div>
+
     </div>
-  </div>
+  </section>
 </div>
