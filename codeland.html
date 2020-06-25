@@ -572,22 +572,20 @@ const poll = (promiseFn, time) => promiseFn()
               .then(sleep(time)
               .then(() => poll(promiseFn, time)));
 
-const fetchNowPlayingData = url => (
-  fetch(url)
-    .then((resp) => resp.json())
-    .then(function(data) {
-        updateTalkInfo(data.now_playing.talk_id);
-    })
-    .catch(function(error) {
-        console.log(error);
-    })
+// Update the currently playing section based on schedule and current time
+const updateNowPlaying = () => (
+    new Promise(resolve => updateTalkInfo())
+      .catch(function(error) {
+          console.log(error);
+      })
 );
 
+// Look for updated schedule data
 const fetchScheduleData = url => (
   fetch(url)
     .then((resp) => resp.json())
     .then(function(data) {
-        scheduleData = data.schedule;
+        scheduleData = calculateTimes(data.schedule);
         updateScheduleInfo(scheduleData);
     })
     .catch(function(error) {
@@ -595,19 +593,36 @@ const fetchScheduleData = url => (
     })
 );
 
-// Update the contents of a div with new data
-const updateTalkInfo = talkId => {
-  talkData = scheduleData.find(element => element.id === talkId);
+//Calculate time data based on strings and add to schedule data
+const calculateTimes = (scheduleData) => {
+  scheduleData.forEach(data => {
+    data.start_time_millis= Date.parse(data.start_time);
+    data.end_time_millis = Date.parse(data.end_time);
+  });
+  return scheduleData;
+}
 
-  document.querySelector('.codeland-livestream__info-title h2').textContent = `${talkData.title} by ${talkData.speaker}`;
-  document.querySelector('.codeland-livestream__speaker-info div p').innerHTML = talkData.bio;
-  document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
+// Update the contents of a div with new data based on the current time
+const updateTalkInfo = () => {
 
-  var currentNowPlaying = document.querySelector('.codeland-schedule__event-now-playing')
-  if(currentNowPlaying) {
-    currentNowPlaying.classList.remove('codeland-schedule__event-now-playing');
-  };
-  document.getElementById(`talk-${talkId}`).classList.add('codeland-schedule__event-now-playing');
+  var currentTimeMillis = Date.now();
+  var talkData;
+
+  if (scheduleData) {
+    talkData = scheduleData.find(element => element.start_time_millis <= currentTimeMillis && element.end_time_millis > currentTimeMillis);
+    };
+
+  if (talkData) {
+    document.querySelector('.codeland-livestream__info-title h2').textContent = `${talkData.title} by ${talkData.speaker}`;
+    document.querySelector('.codeland-livestream__speaker-info div p').innerHTML = talkData.bio;
+    document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
+
+    var currentNowPlaying = document.querySelector('.codeland-schedule__event-now-playing')
+    if(currentNowPlaying) {
+      currentNowPlaying.classList.remove('codeland-schedule__event-now-playing');
+    };
+    document.getElementById(`talk-${talkData.id}`).classList.add('codeland-schedule__event-now-playing');
+  }
 };
 
 const updateScheduleInfo = scheduleData => {
@@ -631,12 +646,14 @@ const updateScheduleInfo = scheduleData => {
   });
 }
 
-//one time initial data load
-fetchScheduleData(SCHEDULE_DATA_URL);
+//one time initial data load, then kick off main polling loops
+fetchScheduleData(SCHEDULE_DATA_URL)
+  .then(updateNowPlaying);
 
-// Main polling loop
 poll(() => fetchScheduleData(SCHEDULE_DATA_URL), SCHEDULE_REFRESH_RATE);
-poll(() => fetchNowPlayingData(NOW_PLAYING_DATA_URL), NOW_PLAYING_REFRESH_RATE);
+poll(() => updateNowPlaying(), NOW_PLAYING_REFRESH_RATE);
+
+
 
 
 // Nav menu
