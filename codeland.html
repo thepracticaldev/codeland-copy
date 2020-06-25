@@ -503,10 +503,11 @@
     right: 0;
     height: calc(100vh - var(--header-height));
     z-index: 200;
-    transform: translateX(100vw);
+    transform: translateX( calc(100vw + 8px));
     transition: var(--transition-props);
     background-color: #fff;
-    box-shadow: -2px 0px 4px 1px #aaa;
+    box-shadow: -1px 0 1px var(--header-shadow);
+    border-top: 1px solid var(--header-shadow);
   }
 
   .codeland-sidecar.showing {
@@ -516,39 +517,28 @@
   .codeland-sidecar > iframe {
     height: 100%;
     border: none;
-    box-shadow: -4px 0px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 -1px 1px var(--header-shadow);
     width: 100vw;
   }
 
   .codeland-sidecar > header {
     background-color: var(--base-inverted);
-    padding: var(--su-4) var(--su-4) 0;
+    padding: var(--su-3) var(--su-4);
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
-  .codeland-sidecar > header > h1 {
+
+  .codeland-sidecar--header__title {
     font-size: var(--fs-l);
     font-weight: var(--fw-bold);
   }
-  .codeland-sidecar > header > h2 {
+  .codeland-sidecar--header__subtitle {
     font-size: var(--fs-base);
     font-weight: var(--fw-normal);
     color: var(--base-70);
-    margin-bottom: 8px;
-  }
-
-  .codeland-sidecar > header > button {
-    border-radius: 100%;
-    border: none;
-    width: 40px;
-    height: 40px;
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    background-color: var(--base-10);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    margin-bottom: var(--su-2);
   }
 
   @media screen and (min-width: 640px) {
@@ -819,10 +809,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
     <div class="codeland-sidecar">
       <header>
-        <h1></h1>
-        <h2></h2>
-        <button type="button" title="Close Article Sidecar">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-labelledby="aolcet3wgdhqhxnku7e0iw8vrv7hs8gg">
+        <div class="codeland-sidecar--header__container">
+          <h1 class="codeland-sidecar--header__title"></h1>
+          <h2 class="codeland-sidecar--header__subtitle"></h2>
+        </div>
+        <button type="button" class="crayons-btn crayons-btn--secondary
+                      crayons-btn--icon-rounded" title="Close Article Sidecar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                             viewBox="0 0 24 24"
+                                                             class="crayons-icon" role="img" aria-labelledby="aolcet3wgdhqhxnku7e0iw8vrv7hs8gg">
             <title id="aolcet3wgdhqhxnku7e0iw8vrv7hs8gg">Close moderator actions panel</title>
             <path d="M13.172 12L8.22198 7.04999L9.63598 5.63599L16 12L9.63598 18.364L8.22198 16.95L13.172 12Z"></path>
           </svg>
@@ -1067,6 +1062,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   const presentSidecar = (url, title, subtitle, watchComments = true) => {
     var userStatus = document.body.getAttribute('data-user-status');
+
     if (userStatus === 'logged-out') {
       window.open(url, '_blank');
       return;
