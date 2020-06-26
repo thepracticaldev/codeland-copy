@@ -560,7 +560,6 @@
 </style>
 
 <script>
-const NOW_PLAYING_DATA_URL = "/page/codeland_now_playing";
 const NOW_PLAYING_REFRESH_RATE = 15000;
 const SCHEDULE_DATA_URL = "/page/codeland_schedule";
 const SCHEDULE_REFRESH_RATE = 120000;
@@ -588,6 +587,7 @@ const fetchScheduleData = url => (
         scheduleData = calculateTimes(data.schedule);
         updateScheduleInfo(scheduleData);
     })
+    .then(updateNowPlaying)
     .catch(function(error) {
         console.log(error);
     })
@@ -646,10 +646,7 @@ const updateScheduleInfo = scheduleData => {
   });
 }
 
-//one time initial data load, then kick off main polling loops
-fetchScheduleData(SCHEDULE_DATA_URL)
-  .then(updateNowPlaying);
-
+//kick off main polling loops
 poll(() => fetchScheduleData(SCHEDULE_DATA_URL), SCHEDULE_REFRESH_RATE);
 poll(() => updateNowPlaying(), NOW_PLAYING_REFRESH_RATE);
 
