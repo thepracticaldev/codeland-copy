@@ -602,6 +602,7 @@ const fetchScheduleData = url => (
 const updateTalkInfo = talkId => {
   talkData = scheduleData.find(element => element.id === talkId);
 
+  document.querySelector('a.codeland-livestream__info-link').href = talkData.url;
   document.querySelector('.codeland-livestream__info-title h2').textContent = `${talkData.title} by ${talkData.speaker}`;
   document.querySelector('.codeland-livestream__speaker-info div p').innerHTML = talkData.bio;
   document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
@@ -1117,6 +1118,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <script>
   const livestreamButt = document.querySelector('.codeland-livestream__speaker-info div button');
+  const speakerInfoLink = document.querySelector('a.codeland-livestream__info-link');
   const closeButt = document.querySelector('.codeland-sidecar header button');
   const sidecarDiv = document.querySelector('.codeland-sidecar');
   const sidecarTitle = sidecarDiv.querySelector('header h1');
@@ -1163,6 +1165,16 @@ document.addEventListener("DOMContentLoaded", function() {
   livestreamButt.addEventListener('click', () => {
     presentSidecar(
       livestreamButt.dataset.url,
+      'Discussion Article',
+      'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>'
+    );
+  });
+
+  // Speaker info Link Event Listener
+  speakerInfoLink.addEventListener('click', (event) => {
+    event.preventDefault();
+    presentSidecar(
+      speakerInfoLink.href,
       'Discussion Article',
       'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>'
     );
