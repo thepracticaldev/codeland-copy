@@ -637,7 +637,7 @@ const updateScheduleInfo = scheduleData => {
 
     var listing = template.content.cloneNode(true);
     listing.querySelector('.codeland-schedule__event').id = `talk-${data.id}`;
-    listing.querySelector('.codeland-schedule__event-metadata').innerHTML = `${start_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${end_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} `;
+    listing.querySelector('.codeland-schedule__event-metadata').innerHTML = `${start_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'})} - ${end_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZoneName: 'short'})} `;
     listing.querySelector('.codeland-schedule__event-info h3').innerHTML = data.speaker;
     listing.querySelector('.codeland-schedule__event-title').innerHTML = data.title;
     listing.querySelector('.codeland-schedule__event-speaker-bio').innerHTML = data.bio;
