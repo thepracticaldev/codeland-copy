@@ -613,9 +613,10 @@ const updateTalkInfo = () => {
 
   if (scheduleData) {
     talkData = scheduleData.find(element => element.start_time_millis <= currentTimeMillis && element.end_time_millis > currentTimeMillis);
-    };
+  }
 
   if (talkData) {
+    document.querySelector('a.codeland-livestream__info-link').href = talkData.url;
     document.querySelector('.codeland-livestream__info-title h2').textContent = `${talkData.title} by ${talkData.speaker}`;
     document.querySelector('.codeland-livestream__speaker-info div p').innerHTML = talkData.bio;
     document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
@@ -623,7 +624,7 @@ const updateTalkInfo = () => {
     var currentNowPlaying = document.querySelector('.codeland-schedule__event-now-playing')
     if(currentNowPlaying) {
       currentNowPlaying.classList.remove('codeland-schedule__event-now-playing');
-    };
+    }
     document.getElementById(`talk-${talkData.id}`).classList.add('codeland-schedule__event-now-playing');
   }
 };
@@ -631,7 +632,7 @@ const updateTalkInfo = () => {
 const scheduleClick = (event) => {
   event.preventDefault();
   presentSidecar(
-    event.target.href,
+    event.target.closest('.codeland-schedule__event-link').href,
     'Discussion Article',
     'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>'
   );
@@ -804,7 +805,7 @@ document.addEventListener("DOMContentLoaded", function() {
   <section id="codeland-livestream">
     <div class="codeland-livestream__container mb-8">
       <div class="codeland-livestream__frame">
-        <iframe id="livestream-frame" src="https://www.youtube.com/embed/EEIk7gwjgIM?controls=0&rel=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe>
+        <iframe id="livestream-frame" src="https://www.youtube.com/embed/EEIk7gwjgIM?controls=1&rel=0&autoplay=1&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe>
       </div>
 
       <aside class="codeland-livestream__speaker-info crayons-card">
@@ -1131,6 +1132,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <script>
   const livestreamButt = document.querySelector('.codeland-livestream__speaker-info div button');
+  const speakerInfoLink = document.querySelector('a.codeland-livestream__info-link');
   const closeButt = document.querySelector('.codeland-sidecar header button');
   const sidecarDiv = document.querySelector('.codeland-sidecar');
   const sidecarTitle = sidecarDiv.querySelector('header h1');
@@ -1176,7 +1178,17 @@ document.addEventListener("DOMContentLoaded", function() {
   // EventListener for Main CTA in Livestream section
   livestreamButt.addEventListener('click', () => {
     presentSidecar(
-      livestreamButt.dataset.url,
+      `${livestreamButt.dataset.url}#comments`,
+      'Discussion Article',
+      'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>'
+    );
+  });
+
+  // Speaker info Link Event Listener
+  speakerInfoLink.addEventListener('click', (event) => {
+    event.preventDefault();
+    presentSidecar(
+      speakerInfoLink.href,
       'Discussion Article',
       'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>'
     );
