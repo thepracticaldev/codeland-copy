@@ -572,6 +572,11 @@
     text-align: center;
   }
 
+  .unauthenticated-container .links {
+    margin: auto;
+    max-width: 500px;
+  }
+
   .codeland-sidecar > iframe {
     height: 100%;
     border: none;
@@ -611,7 +616,27 @@
     }
 
     .codeland-sidecar > iframe {
-      width: 400px;
+      width: 415px;
+    }
+  }
+
+  @media screen and (min-width: 1280px) {
+    /*
+     * This calc makes use of the entire right side of the screen. It starts
+     * outside the right edge of the livestream video all the way to the end
+     * of the viewport.
+     */
+
+    .codeland-sidecar {
+      transform: translateX(calc((100vw - 900px) - ((100vw - var(--site-width)) / 2)));
+    }
+
+    .unauthenticated-container {
+      width: calc((100vw - 900px) - ((100vw - var(--site-width)) / 2));
+    }
+
+    .codeland-sidecar > iframe {
+      width: calc((100vw - 900px) - ((100vw - var(--site-width)) / 2));
     }
   }
 </style>
