@@ -2,7 +2,7 @@ require 'date'
 require 'json'
 
 class SampleScheduleGenerator
-  STEP_INTERVAL = 60
+  STEP_INTERVAL = 120
 
   LOREM_IPSUM = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation t dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation'.freeze
   SPEAKERS = ['Scott Hanselman', 'Vaidehi Joshi', 'Sangeetha KP'].freeze
@@ -47,5 +47,5 @@ class SampleScheduleGenerator
 
 end
 
-puts SampleScheduleGenerator.new("July 2, 2020 19:20:00 UTC", "July 2, 2020 20:30:00 UTC").generate
+puts SampleScheduleGenerator.new("June 26, 2020 23:17:00 UTC", "June 26, 2020 23:30:00 UTC").generate
 
