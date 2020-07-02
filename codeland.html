@@ -572,8 +572,13 @@
   }
 
   .unauthenticated-container {
-    width: 415px;
+    width: 100vw;
     text-align: center;
+  }
+
+  .unauthenticated-container .links {
+    margin: auto;
+    max-width: 500px;
   }
 
   .codeland-sidecar > iframe {
@@ -609,8 +614,53 @@
       transition: var(--transition-props);
     }
 
+    .unauthenticated-container {
+      width: 415px;
+      text-align: center;
+    }
+
     .codeland-sidecar > iframe {
-      width: 400px;
+      width: 415px;
+    }
+  }
+
+  @media screen and (min-width: 1280px) {
+    /*
+     * This calc makes use of the entire right side of the screen. It starts
+     * outside the right edge of the livestream video all the way to the end
+     * of the viewport.
+     */
+
+    .codeland-sidecar {
+      transform: translateX(calc((100vw - 900px) - ((100vw - var(--site-width)) / 2)));
+    }
+
+    .unauthenticated-container {
+      width: calc((100vw - 900px) - ((100vw - var(--site-width)) / 2));
+    }
+
+    .codeland-sidecar > iframe {
+      width: calc((100vw - 900px) - ((100vw - var(--site-width)) / 2));
+    }
+  }
+
+  @media screen and (min-width: 2048px) {
+    /*
+     * Same as the previous block but since we have enough screen here it now
+     * avoids blocking the content in the screen, meaning we can have the
+     * sidecar open and not interfere with anything else on the page.
+     */
+
+    .codeland-sidecar {
+      transform: translateX(calc((100vw - 1280px) - ((100vw - var(--site-width)) / 2)));
+    }
+
+    .unauthenticated-container {
+      width: calc((100vw - 1280px) - ((100vw - var(--site-width)) / 2));
+    }
+
+    .codeland-sidecar > iframe {
+      width: calc((100vw - 1280px) - ((100vw - var(--site-width)) / 2));
     }
   }
 </style>
@@ -1284,7 +1334,7 @@ document.addEventListener("DOMContentLoaded", function() {
     presentSidecar(
       event.target.dataset.url,
       'Social Corner',
-      'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>',
+      'Powered by <a href="/connect" target="_blank">Connect</a>',
       false
     );
   }
