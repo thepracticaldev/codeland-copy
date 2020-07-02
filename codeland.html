@@ -9,7 +9,6 @@
   .codeland-content__container {
     box-sizing: border-box;
     flex-wrap: wrap;
-    /* margin-bottom: var(--su-8); */
     padding: var(--su-6) var(--su-4);
     width: 100%;
   }
@@ -17,7 +16,7 @@
   @media screen and (min-width: 768px) {
     .codeland-content__container {
       width: 100%;
-      padding: var(--su-10) var(--su-4);
+      padding: var(--su-9) var(--su-4);
       margin: 0 auto;
       flex-wrap: nowrap;
     }
@@ -240,6 +239,14 @@
     position: relative;
   }
 
+  #codeland-schedule.expanded .codeland-schedule__event-link {
+    display: block;
+  }
+
+  <!-- #codeland&#45;schedule.expanded .expand&#45;schedule { -->
+  <!--   display: none; -->
+  <!-- } -->
+
   #codeland-schedule:before {
     background: var(--accent-brand);
     height: 100%;
@@ -259,11 +266,37 @@
     flex-grow: 1;
   }
 
-  .codeland-schedule__event-link {
-    color: var(--base-inverted);
-    display: block;
+  @media screen and (min-width: 640px) {
+    .codeland-schedule__button-container {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
+      grid-column-gap: var(--su-4);
+    }
   }
 
+  .expand-schedule {
+    color: var(--accent-brand);
+    background: var(--base-inverted);
+    grid-column-start: 2;
+  }
+
+  .expand-schedule:hover:enabled {
+    color: var(--base-inverted);
+    background: var(--accent-brand-lighter);
+  }
+
+  .codeland-schedule__list-container {
+    margin-bottom: var(--su-4);
+  }
+
+  .codeland-schedule__event-link {
+    color: var(--base-inverted);
+    display: none;
+  }
+
+  .codeland-schedule__event-link:nth-child(-n+6) {
+    display: block;
+  }
 
   .codeland-schedule__event-view-link {
     display: none;
@@ -271,10 +304,15 @@
     transform: translateX(0);
   }
 
-  .codeland-schedule__event-now-playing {
-    background: green;
+  .codeland-schedule__event-now-playing__visible {
+    display: none;
   }
 
+  .codeland-schedule__event-now-playing .codeland-schedule__event-now-playing__visible {
+    display: inline-block;
+    background: var(--accent-success);
+    border-color: var(--accent-success);
+  }
 
   @media screen and (min-width: 768px) {
 
@@ -290,7 +328,6 @@
       opacity: 0.8;
     }
   }
-
 
   .codeland-schedule__event {
     display: block;
@@ -314,10 +351,22 @@
 
   .codeland-schedule__event-metadata {
     font-family: var(--ff-accent);
+    opacity: 0.7;
+    align-self: center;
+  }
+
+  .codeland-schedule__event-speaker {
+    font-weight: var(--fw-medium);
   }
 
   .codeland-schedule__event-title {
+    font-weight: var(--fw-medium);
+    opacity: 0.7;
+  }
+
+  .codeland-schedule__event-link:hover .codeland-schedule__event-title {
     text-decoration: underline;
+    opacity: 1.0;
   }
 
   .codeland-schedule__event-description {
@@ -658,7 +707,8 @@ const updateScheduleInfo = scheduleData => {
     element.removeEventListener('click');
     element.remove();
   });
-  var listing_container = document.querySelector('.codeland-content__container');
+  var listing_container =
+    document.querySelector('.codeland-schedule__list-container');
   var template = document.querySelector('#schedule-entry-template');
   scheduleData.forEach(data => {
     var start_time = new Date(Date.parse(data.start_time));
@@ -683,8 +733,6 @@ const updateScheduleInfo = scheduleData => {
 //kick off main polling loops
 poll(() => fetchScheduleData(SCHEDULE_DATA_URL), SCHEDULE_REFRESH_RATE);
 poll(() => updateNowPlaying(), NOW_PLAYING_REFRESH_RATE);
-
-
 
 
 // Nav menu
@@ -777,7 +825,22 @@ document.addEventListener("DOMContentLoaded", function() {
   window.addEventListener('load', checkInitialMenuPosition);
   window.addEventListener('scroll', pinNav);
   window.addEventListener('scroll', updateItem);
+
+  // Expand schedule
+  const expandButton = document.querySelector('.expand-schedule');
+
+  expandButton.addEventListener('click', function() {
+    codelandSchedule.classList.toggle('expanded');
+
+    if (codelandSchedule.classList.contains('expanded')) {
+      expandButton.innerText = 'See less';
+    } else {
+      expandButton.innerText = 'See all';
+      location.href = '#codeland-schedule'; // When minimizing the schedule we want to keep it in sight
+    }
+  });
 });
+
 
 </script>
 
@@ -923,6 +986,13 @@ document.addEventListener("DOMContentLoaded", function() {
           Schedule & agenda
         </h2>
       </header>
+      <div class="codeland-schedule__list-container">
+      </div>
+      <div class="codeland-schedule__button-container">
+        <button class="crayons-btn crayons-btn--secondary w-100 expand-schedule">
+          See all
+        </button>
+      </div>
     </div>
   </section>
 
@@ -1122,7 +1192,10 @@ document.addEventListener("DOMContentLoaded", function() {
         10 AM - 10:20 AM UTC
       </div>
       <div class="codeland-schedule__event-info">
-        <h3>
+        <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+          Now playing
+        </span>
+        <h3 class="codeland-schedule__event-speaker">
           Gargi Sharma
         </h3>
         <h4 class="codeland-schedule__event-title">
