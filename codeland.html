@@ -171,7 +171,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
@@ -620,12 +620,15 @@ const updateTalkInfo = () => {
     document.querySelector('.codeland-livestream__info-title h2').textContent = `${talkData.title} by ${talkData.speaker}`;
     document.querySelector('.codeland-livestream__speaker-info div p').innerHTML = talkData.bio;
     document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
+    document.querySelector('.codeland-livestream__speaker-info__footer').style.display = "flex";
 
 
     if (talkData.sponsor) {
       document.querySelector('.codeland-livestream__speaker-info__footer button').textContent = 'Learn more';
+      document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
     } else {
       document.querySelector('.codeland-livestream__speaker-info__footer button').textContent = 'See discussion';
+      document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = `${talkData.url}#comments`;
     }
 
     var currentNowPlaying = document.querySelector('.codeland-schedule__event-now-playing')
@@ -818,7 +821,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <aside class="codeland-livestream__speaker-info crayons-card">
         <div class="crayons-card__body">
           <p class="mb-4 fs-base">
-            Welcome to CodeLand: Distributed 2020! The show will start soon, get ready!
+            Welcome to CodeLand: Distributed 2020!
           </p>
           <div class="codeland-livestream__speaker-info__footer">
             <button class="crayons-btn crayons-btn--secondary w-100" type="button" data-url="">
@@ -1177,7 +1180,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // EventListener for Main CTA in Livestream section
   livestreamButt.addEventListener('click', () => {
     presentSidecar(
-      `${livestreamButt.dataset.url}#comments`,
+      livestreamButt.dataset.url,
       'Discussion Article',
       'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>'
     );
