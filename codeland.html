@@ -9,7 +9,6 @@
   .codeland-content__container {
     box-sizing: border-box;
     flex-wrap: wrap;
-    /* margin-bottom: var(--su-8); */
     padding: var(--su-6) var(--su-4);
     width: 100%;
   }
@@ -17,7 +16,7 @@
   @media screen and (min-width: 768px) {
     .codeland-content__container {
       width: 100%;
-      padding: var(--su-10) var(--su-4);
+      padding: var(--su-9) var(--su-4);
       margin: 0 auto;
       flex-wrap: nowrap;
     }
@@ -305,10 +304,15 @@
     transform: translateX(0);
   }
 
-  .codeland-schedule__event-now-playing {
-    background: green;
+  .codeland-schedule__event-now-playing__visible {
+    display: none;
   }
 
+  .codeland-schedule__event-now-playing .codeland-schedule__event-now-playing__visible {
+    display: inline-block;
+    background: var(--accent-success);
+    border-color: var(--accent-success);
+  }
 
   @media screen and (min-width: 768px) {
 
@@ -1183,6 +1187,9 @@ document.addEventListener("DOMContentLoaded", function() {
         10 AM - 10:20 AM UTC
       </div>
       <div class="codeland-schedule__event-info">
+        <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+          Now playing
+        </span>
         <h3 class="codeland-schedule__event-speaker">
           Gargi Sharma
         </h3>
