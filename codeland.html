@@ -702,7 +702,7 @@ const scheduleClick = (event) => {
 }
 
 const updateScheduleInfo = scheduleData => {
-  document.querySelectorAll('.codeland-content__container .codeland-schedule__event').forEach(element => {
+  document.querySelectorAll('.codeland-schedule__event-link').forEach(element => {
     element.removeEventListener('click');
     element.remove();
   });
