@@ -244,9 +244,9 @@
     display: block;
   }
 
-  #codeland-schedule.expanded .expand-schedule {
-    display: none;
-  }
+  <!-- #codeland&#45;schedule.expanded .expand&#45;schedule { -->
+  <!--   display: none; -->
+  <!-- } -->
 
   #codeland-schedule:before {
     background: var(--accent-brand);
@@ -809,11 +809,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Expand schedule
   const expandButton = document.querySelector('.expand-schedule');
-  console.log(expandButton);
 
   expandButton.addEventListener('click', function() {
-    console.log("clicked");
-    codelandSchedule.classList.add('expanded');
+    codelandSchedule.classList.toggle('expanded');
+
+    if (codelandSchedule.classList.contains('expanded')) {
+      expandButton.innerText = 'See less';
+    } else {
+      expandButton.innerText = 'See all';
+      location.href = '#codeland-schedule'; // When minimizing the schedule we want to keep it in sight
+    }
   });
 });
 
