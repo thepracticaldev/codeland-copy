@@ -670,6 +670,15 @@ const NOW_PLAYING_REFRESH_RATE = 15000;
 const SCHEDULE_DATA_URL = "/page/codeland_schedule";
 const SCHEDULE_REFRESH_RATE = 120000;
 
+const LOCAL_STRING_SUPPORTED = () => {
+  try{
+    new Date().toLocaleTimeString('i');
+  } catch(e) {
+    return e.name === 'RangeError';
+  }
+  return false;
+}
+
 var scheduleData;
 
 const sleep = time => new Promise(resolve => setTimeout(resolve, time));
@@ -765,7 +774,12 @@ const updateScheduleInfo = scheduleData => {
 
     var listing = template.content.cloneNode(true);
     listing.querySelector('.codeland-schedule__event').id = `talk-${data.id}`;
-    listing.querySelector('.codeland-schedule__event-metadata').innerHTML = `${start_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'})} - ${end_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZoneName: 'short'})} `;
+    if (LOCAL_STRING_SUPPORTED) {
+      listing.querySelector('.codeland-schedule__event-metadata').innerHTML = `${start_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'})} - ${end_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZoneName: 'short'})} `;
+    } else {
+      listing.querySelector('.codeland-schedule__event-metadata').innerHTML = `${start_time.toTimeString().replace(/.*(\d{2}:\d{2}):\d{2}.*/, "$1")} - ${end_time.toTimeString().replace(/.*(\d{2}:\d{2}):\d{2}.*\((.*)\)/, "$1 $2")} `;
+    }
+    
     listing.querySelector('.codeland-schedule__event-info h3').innerHTML = data.speaker;
     listing.querySelector('.codeland-schedule__event-title').innerHTML = data.title;
     listing.querySelector('.codeland-schedule__event-speaker-bio').innerHTML = data.bio;
