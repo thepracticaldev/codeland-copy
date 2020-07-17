@@ -121,15 +121,9 @@
   @media screen and (min-width: 640px) {
     .codeland-livestream__container {
       grid-template-columns: 5fr 2fr;
-      grid-template-rows: 400px;
+      grid-template-rows: auto;
       height: fit-content;
       width: 100%;
-    }
-  }
-
-  @media screen and (min-width: 1024px) {
-    .codeland-livestream__container {
-      grid-template-rows: 500px;
     }
   }
 
@@ -139,17 +133,29 @@
     }
   }
 
-
+  .codeland-livestream__frame {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 */
+    height: 0;
+    overflow: hidden;
+  }
 
   #livestream-frame {
-    height: 360px;
+    position: absolute;
+    height: 100%;
     width: 100%;
+    top: 0;
+    left: 0;
   }
 
   @media screen and (min-width: 640px) {
     #livestream-frame {
       height: 100%;
     }
+  }
+
+  p:last-child {
+    margin-bottom: 0 !important;
   }
 
   .codeland-livestream__speaker-info {
@@ -945,12 +951,12 @@ document.addEventListener("DOMContentLoaded", function() {
   <section id="codeland-livestream">
     <div class="codeland-livestream__container mb-8">
       <div class="codeland-livestream__frame">
-        <iframe id="livestream-frame" src="https://www.youtube.com/embed/EEIk7gwjgIM?controls=1&rel=0&autoplay=1&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe>
+        <iframe id="livestream-frame" width="640" height="360" src="https://www.youtube.com/embed/EEIk7gwjgIM?controls=1&rel=0&autoplay=1&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe>
       </div>
 
       <aside class="codeland-livestream__speaker-info crayons-card">
         <div class="crayons-card__body">
-          <p class="mb-4 fs-base">
+          <p class="fs-base">
             Welcome to CodeLand: Distributed 2020!
           </p>
           <div class="codeland-livestream__speaker-info__footer">
