@@ -423,40 +423,48 @@
 
   @media screen and (min-width: 640px) {
     .codeland-sponsors__platinum {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(20px, 1fr));
     }
+  }
+
+  .codeland-sponsors__logo {
+    height: auto;
+    object-fit: contain;
+    width: 100%;
   }
 
   .codeland-sponsors__logo-wrapper {
+    box-sizing: border-box;
+    display: flex;
+    padding: var(--su-4);
     position: relative;
-    display: flex;
-    background: red;
-    width: 100%;
-    height: 240px;
     transition: all var(--transition-props);
-  }
-
-
-  .codeland-sponsors__logo-wrapper:hover:after {
-    align-items: center;
-    background: rgba(0,0,0,0.15);
-    color: var(--base-inverted);
-    content: "View booth";
-    display: flex;
-    height: 100%;
-    justify-content: center;
-    position: absolute;
+    height: 240px;
     width: 100%;
-  }
-
-  .codeland-sponsors__platinum .codeland-sponsors__logo-wrapper {
-      height: 240px;
   }
 
   @media screen and (min-width: 640px) {
-    .codeland-sponsors__platinum .codeland-sponsors__logo-wrapper {
+    .codeland-sponsors__logo-wrapper {
         height: 320px;
     }
+  }
+
+  .codeland-sponsors__logo-wrapper:hover .codeland-sponsors__logo {
+    opacity: 0.7;
+  }
+
+  .codeland-sponsors__logo-wrapper:hover:after {
+    align-items: center;
+    background: rgba(0,0,0,0.60);
+    color: var(--base-inverted);
+    content: "Visit booth";
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
   }
 
   .codeland-sponsors__mentor {
@@ -465,7 +473,7 @@
 
   @media screen and (min-width: 640px) {
     .codeland-sponsors__mentor {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 
@@ -1076,26 +1084,65 @@ document.addEventListener("DOMContentLoaded", function() {
           questions.
         </p>
       </header>
+
       <div class="codeland-sponsors__platinum">
         <a href="https://dev.to/devteam/introducing-our-june-2020-sponsors-4cp9" class="codeland-sponsors__logo-wrapper">
-          <img class="codeland-sponsors__logo" src="" />
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/usahfkv5mu22d060ker0.png"
+          alt="github" />
         </a>
         <a href="https://dev.to/ben/introducing-our-february-2018-sponsors-584f" class="codeland-sponsors__logo-wrapper">
-          <img class="codeland-sponsors__logo" src="" />
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/c8ikykvrs51fpvls44gu.png"
+          alt="twilio" />
         </a>
       </div>
+
       <div class="codeland-sponsors__mentor">
         <a href="https://dev.to/ben/introducing-our-july-2018-sponsors-p9f" class="codeland-sponsors__logo-wrapper">
-          <img class="codeland-sponsors__logo" src="" />
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/c7hdklzyd0q3m54cidrt.png"
+          alt="coderbyte" />
         </a>
         <a href="https://dev.to/devteam/introducing-our-april-2018-sponsors-1jfi" class="codeland-sponsors__logo-wrapper">
-          <img class="codeland-sponsors__logo" src="" />
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/axg4lr1l2vrvuamzw86h.png"
+          alt="mozilla" />
+        </a>
+        <a href="https://dev.to/devteam/introducing-our-april-2018-sponsors-1jfi" class="codeland-sponsors__logo-wrapper">
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/o0pcrzzb9mm9o4mxcdzr.png"
+          alt="vonage" />
         </a>
         <a href="https://dev.to/devteam/introducing-our-december-2018-sponsors-2579" class="codeland-sponsors__logo-wrapper">
-          <img class="codeland-sponsors__logo" src="" />
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/tnez3co4sfg712ea5n58.png"
+          alt="harper db" />
         </a>
         <a href="https://dev.to/ben/introducing-our-august-2018-sponsors-a82" class="codeland-sponsors__logo-wrapper">
-          <img class="codeland-sponsors__logo" src="" />
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/ibeplbvm51lvzl6fslt8.png"
+          alt="microsoft azure" />
+        </a>
+        <a href="https://dev.to/ben/introducing-our-august-2018-sponsors-a82" class="codeland-sponsors__logo-wrapper">
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/8m1mrxdeh62qr55lmzg9.png"
+          alt="gitcoin" />
+        </a>
+        <a href="https://dev.to/ben/introducing-our-august-2018-sponsors-a82" class="codeland-sponsors__logo-wrapper">
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/z1vkt45wpzvqahe3k92f.png"
+          alt="ergosesh" />
+        </a>
+        <a href="https://dev.to/ben/introducing-our-august-2018-sponsors-a82" class="codeland-sponsors__logo-wrapper">
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/b0swoejcgqp6lawy0mdb.png"
+          alt="launchdarkly" />
+        </a>
+        <a href="https://dev.to/ben/introducing-our-august-2018-sponsors-a82" class="codeland-sponsors__logo-wrapper">
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/8em3p7dvvu7r40wir7hh.png"
+          alt="dottech" />
         </a>
       </div>
     </div>
