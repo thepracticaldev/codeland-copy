@@ -393,7 +393,7 @@
     background: var(--base-inverted);
     content: "";
     height: 102%;
-    left: -10vw;
+    left: -20vw;
     position: absolute;
     top: 0;
     transform: rotate(2deg);
@@ -403,7 +403,7 @@
 
   @media screen and (min-width: 768px) {
     #codeland-sponsors:before {
-      transform: rotate(3deg);
+      transform: rotate(1deg);
       top: -6px;
       height: -webkit-fill-available;
     }
@@ -434,9 +434,10 @@
   }
 
   .codeland-sponsors__logo-wrapper {
+    border: 2px solid var(--base-10);
     box-sizing: border-box;
     display: flex;
-    padding: var(--su-4);
+    padding: var(--su-6);
     position: relative;
     transition: all var(--transition-props);
     height: 240px;
@@ -444,10 +445,17 @@
   }
 
   @media screen and (min-width: 640px) {
-    .codeland-sponsors__logo-wrapper {
+    .codeland-sponsors__platinum .codeland-sponsors__logo-wrapper {
         height: 320px;
     }
   }
+
+  @media screen and (min-width: 640px) {
+    .codeland-sponsors__mentor .codeland-sponsors__logo-wrapper {
+      height: 160px;
+    }
+  }
+
 
   .codeland-sponsors__logo-wrapper:hover .codeland-sponsors__logo {
     opacity: 0.7;
@@ -474,12 +482,6 @@
   @media screen and (min-width: 640px) {
     .codeland-sponsors__mentor {
       grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  @media screen and (min-width: 640px) {
-    .codeland-sponsors__logo-wrapper {
-      height: 160px;
     }
   }
 
@@ -519,6 +521,20 @@
   }
 
 
+  .codeland-social-corner__item {
+    display: flex;
+    min-height: 180px;
+  }
+
+  .codeland-social-corner__item-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .codeland-social-corner__item > div {
+    flex: 1;
+  }
 
   /****** CAREER FAIR *******/
 
@@ -588,6 +604,7 @@
   .unauthenticated-container {
     width: 100vw;
     text-align: center;
+    padding: var(--su-4);
   }
 
   .unauthenticated-container .links {
@@ -1163,92 +1180,70 @@ document.addEventListener("DOMContentLoaded", function() {
           </h2>
           <p class="codeland-section__description">
             Even though we’re virtual this year, we still want you to know that you
-            can still make connects with others. Here are some breakout rooms in
+            can still make connections with others. Here are some social rooms in
             Connect where you can chat and mingle with others.
           </p>
         </header>
         <div class="codeland-social-corner__body">
           <div class="codeland-social-corner__item crayons-card">
-            <div class="crayons-card__body">
-              <h4>
-                #watercooler
-              </h4>
-              <p class="fs-s mb-4">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididuntV
-              </p>
+            <div class="codeland-social-corner__item-body crayons-card__body">
+              <div>
+                <h4>
+                  #introduction
+                </h4>
+                <p class="fs-s mb-4">
+                  Say hello to fellow CodeLand attendees here from all over the
+                  world <span>🌍</span>.
+                </p>
+              </div>
               <button class="crayons-btn crayons-btn--secondary" type="button" data-url="https://dev.to/connect/codeland-rehearsal-4365">
-                Join
+                Open Connect
               </button>
             </div>
           </div>
           <div class="codeland-social-corner__item crayons-card">
-            <div class="crayons-card__body">
-              <h4>
-                #watercooler
-              </h4>
-              <p class="fs-s mb-4">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididuntV
-              </p>
+            <div class="codeland-social-corner__item-body crayons-card__body">
+              <div>
+                <h4>
+                  #show-and-tell
+                </h4>
+                <p class="fs-s mb-4">
+                  Do you have a project you want to share with others? Come share! <span>👀</span>.
+                </p>
+              </div>
               <button class="crayons-btn crayons-btn--secondary" type="button" data-url="https://dev.to/connect/codeland-rehearsal-4365">
-                Join
+                Open Connect
               </button>
             </div>
           </div>
           <div class="codeland-social-corner__item crayons-card">
-            <div class="crayons-card__body">
-              <h4>
-                #watercooler
-              </h4>
-              <p class="fs-s mb-4">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididuntV
-              </p>
+            <div class="codeland-social-corner__item-body crayons-card__body">
+              <div>
+                <h4>
+                  #code-newbie
+                </h4>
+                <p class="fs-s mb-4">
+                  Did you recently get into coding and programming? Come chat with
+                  others to share tips and advice. <span>😀</span>
+                </p>
+              </div>
               <button class="crayons-btn crayons-btn--secondary" type="button" data-url="https://dev.to/connect/codeland-rehearsal-4365">
-                Join
+                Open Connect
               </button>
             </div>
           </div>
           <div class="codeland-social-corner__item crayons-card">
-            <div class="crayons-card__body">
-              <h4>
-                #watercooler
-              </h4>
-              <p class="fs-s mb-4">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididuntV
-              </p>
+            <div class="codeland-social-corner__item-body crayons-card__body">
+              <div>
+                <h4>
+                  #watercooler
+                </h4>
+                <p class="fs-s mb-4">
+                  Chat about whatever is on your mind <span>💬</span>.
+                </p>
+              </div>
               <button class="crayons-btn crayons-btn--secondary" type="button" data-url="https://dev.to/connect/codeland-rehearsal-4365">
-                Join
-              </button>
-            </div>
-          </div>
-          <div class="codeland-social-corner__item crayons-card">
-            <div class="crayons-card__body">
-              <h4>
-                #watercooler
-              </h4>
-              <p class="fs-s mb-4">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididuntV
-              </p>
-              <button class="crayons-btn crayons-btn--secondary" type="button" data-url="https://dev.to/connect/codeland-rehearsal-4365">
-                Join
-              </button>
-            </div>
-          </div>
-          <div class="codeland-social-corner__item crayons-card">
-            <div class="crayons-card__body">
-              <h4>
-                #watercooler
-              </h4>
-              <p class="fs-s mb-4">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididuntV
-              </p>
-              <button class="crayons-btn crayons-btn--secondary" type="button" data-url="https://dev.to/connect/codeland-rehearsal-4365">
-                Join
+                Open Connect
               </button>
             </div>
           </div>
