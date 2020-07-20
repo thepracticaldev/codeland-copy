@@ -26,6 +26,7 @@
 
   .codeland-banner__logo img {
     max-width: 100%;
+    transform: rotateZ(-3deg);
   }
 
   .codeland-banner__description {
@@ -42,6 +43,17 @@
     height: 40px;
   }
 </style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const codelandBanner = document.querySelector('.codeland-banner');
+  const codelandBannerCloseBtn = document.querySelector('.codeland-banner__close-btn');
+
+  codelandBannerCloseBtn.addEventListener('click', function(){
+    codelandBanner.classList.add('hidden');
+  });
+});
+</script>
 
 <div id="js-hero-banner" class="codeland-banner-container">
   <section class="crayons-layout">
