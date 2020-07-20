@@ -121,15 +121,9 @@
   @media screen and (min-width: 640px) {
     .codeland-livestream__container {
       grid-template-columns: 5fr 2fr;
-      grid-template-rows: 400px;
+      grid-template-rows: auto;
       height: fit-content;
       width: 100%;
-    }
-  }
-
-  @media screen and (min-width: 1024px) {
-    .codeland-livestream__container {
-      grid-template-rows: 500px;
     }
   }
 
@@ -139,17 +133,29 @@
     }
   }
 
-
+  .codeland-livestream__frame {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 */
+    height: 0;
+    overflow: hidden;
+  }
 
   #livestream-frame {
-    height: 360px;
+    position: absolute;
+    height: 100%;
     width: 100%;
+    top: 0;
+    left: 0;
   }
 
   @media screen and (min-width: 640px) {
     #livestream-frame {
       height: 100%;
     }
+  }
+
+  p:last-child {
+    margin-bottom: 0 !important;
   }
 
   .codeland-livestream__speaker-info {
@@ -417,40 +423,48 @@
 
   @media screen and (min-width: 640px) {
     .codeland-sponsors__platinum {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(20px, 1fr));
     }
+  }
+
+  .codeland-sponsors__logo {
+    height: auto;
+    object-fit: contain;
+    width: 100%;
   }
 
   .codeland-sponsors__logo-wrapper {
+    box-sizing: border-box;
+    display: flex;
+    padding: var(--su-4);
     position: relative;
-    display: flex;
-    background: red;
-    width: 100%;
-    height: 240px;
     transition: all var(--transition-props);
-  }
-
-
-  .codeland-sponsors__logo-wrapper:hover:after {
-    align-items: center;
-    background: rgba(0,0,0,0.15);
-    color: var(--base-inverted);
-    content: "View booth";
-    display: flex;
-    height: 100%;
-    justify-content: center;
-    position: absolute;
+    height: 240px;
     width: 100%;
-  }
-
-  .codeland-sponsors__platinum .codeland-sponsors__logo-wrapper {
-      height: 240px;
   }
 
   @media screen and (min-width: 640px) {
-    .codeland-sponsors__platinum .codeland-sponsors__logo-wrapper {
+    .codeland-sponsors__logo-wrapper {
         height: 320px;
     }
+  }
+
+  .codeland-sponsors__logo-wrapper:hover .codeland-sponsors__logo {
+    opacity: 0.7;
+  }
+
+  .codeland-sponsors__logo-wrapper:hover:after {
+    align-items: center;
+    background: rgba(0,0,0,0.60);
+    color: var(--base-inverted);
+    content: "Visit booth";
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
   }
 
   .codeland-sponsors__mentor {
@@ -459,7 +473,7 @@
 
   @media screen and (min-width: 640px) {
     .codeland-sponsors__mentor {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 
@@ -572,8 +586,13 @@
   }
 
   .unauthenticated-container {
-    width: 415px;
+    width: 100vw;
     text-align: center;
+  }
+
+  .unauthenticated-container .links {
+    margin: auto;
+    max-width: 500px;
   }
 
   .codeland-sidecar > iframe {
@@ -609,8 +628,53 @@
       transition: var(--transition-props);
     }
 
+    .unauthenticated-container {
+      width: 415px;
+      text-align: center;
+    }
+
     .codeland-sidecar > iframe {
-      width: 400px;
+      width: 415px;
+    }
+  }
+
+  @media screen and (min-width: 1280px) {
+    /*
+     * This calc makes use of the entire right side of the screen. It starts
+     * outside the right edge of the livestream video all the way to the end
+     * of the viewport.
+     */
+
+    .codeland-sidecar {
+      transform: translateX(calc((100vw - 900px) - ((100vw - var(--site-width)) / 2)));
+    }
+
+    .unauthenticated-container {
+      width: calc((100vw - 900px) - ((100vw - var(--site-width)) / 2));
+    }
+
+    .codeland-sidecar > iframe {
+      width: calc((100vw - 900px) - ((100vw - var(--site-width)) / 2));
+    }
+  }
+
+  @media screen and (min-width: 2048px) {
+    /*
+     * Same as the previous block but since we have enough screen here it now
+     * avoids blocking the content in the screen, meaning we can have the
+     * sidecar open and not interfere with anything else on the page.
+     */
+
+    .codeland-sidecar {
+      transform: translateX(calc((100vw - 1280px) - ((100vw - var(--site-width)) / 2)));
+    }
+
+    .unauthenticated-container {
+      width: calc((100vw - 1280px) - ((100vw - var(--site-width)) / 2));
+    }
+
+    .codeland-sidecar > iframe {
+      width: calc((100vw - 1280px) - ((100vw - var(--site-width)) / 2));
     }
   }
 </style>
@@ -619,6 +683,15 @@
 const NOW_PLAYING_REFRESH_RATE = 15000;
 const SCHEDULE_DATA_URL = "/page/codeland_schedule";
 const SCHEDULE_REFRESH_RATE = 120000;
+
+const LOCAL_STRING_SUPPORTED = () => {
+  try{
+    new Date().toLocaleTimeString('i');
+  } catch(e) {
+    return e.name === 'RangeError';
+  }
+  return false;
+}
 
 var scheduleData;
 
@@ -702,7 +775,7 @@ const scheduleClick = (event) => {
 }
 
 const updateScheduleInfo = scheduleData => {
-  document.querySelectorAll('.codeland-content__container .codeland-schedule__event').forEach(element => {
+  document.querySelectorAll('.codeland-schedule__event-link').forEach(element => {
     element.removeEventListener('click');
     element.remove();
   });
@@ -715,7 +788,12 @@ const updateScheduleInfo = scheduleData => {
 
     var listing = template.content.cloneNode(true);
     listing.querySelector('.codeland-schedule__event').id = `talk-${data.id}`;
-    listing.querySelector('.codeland-schedule__event-metadata').innerHTML = `${start_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'})} - ${end_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZoneName: 'short'})} `;
+    if (LOCAL_STRING_SUPPORTED) {
+      listing.querySelector('.codeland-schedule__event-metadata').innerHTML = `${start_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'})} - ${end_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZoneName: 'short'})} `;
+    } else {
+      listing.querySelector('.codeland-schedule__event-metadata').innerHTML = `${start_time.toTimeString().replace(/.*(\d{2}:\d{2}):\d{2}.*/, "$1")} - ${end_time.toTimeString().replace(/.*(\d{2}:\d{2}):\d{2}.*\((.*)\)/, "$1 $2")} `;
+    }
+    
     listing.querySelector('.codeland-schedule__event-info h3').innerHTML = data.speaker;
     listing.querySelector('.codeland-schedule__event-title').innerHTML = data.title;
     listing.querySelector('.codeland-schedule__event-speaker-bio').innerHTML = data.bio;
@@ -881,12 +959,12 @@ document.addEventListener("DOMContentLoaded", function() {
   <section id="codeland-livestream">
     <div class="codeland-livestream__container mb-8">
       <div class="codeland-livestream__frame">
-        <iframe id="livestream-frame" src="https://www.youtube.com/embed/EEIk7gwjgIM?controls=1&rel=0&autoplay=1&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe>
+        <iframe id="livestream-frame" width="640" height="360" src="https://www.youtube.com/embed/EEIk7gwjgIM?controls=1&rel=0&autoplay=1&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe>
       </div>
 
       <aside class="codeland-livestream__speaker-info crayons-card">
         <div class="crayons-card__body">
-          <p class="mb-4 fs-base">
+          <p class="fs-base">
             Welcome to CodeLand: Distributed 2020!
           </p>
           <div class="codeland-livestream__speaker-info__footer">
@@ -1006,26 +1084,65 @@ document.addEventListener("DOMContentLoaded", function() {
           questions.
         </p>
       </header>
+
       <div class="codeland-sponsors__platinum">
         <a href="https://dev.to/devteam/introducing-our-june-2020-sponsors-4cp9" class="codeland-sponsors__logo-wrapper">
-          <img class="codeland-sponsors__logo" src="" />
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/usahfkv5mu22d060ker0.png"
+          alt="github" />
         </a>
         <a href="https://dev.to/ben/introducing-our-february-2018-sponsors-584f" class="codeland-sponsors__logo-wrapper">
-          <img class="codeland-sponsors__logo" src="" />
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/c8ikykvrs51fpvls44gu.png"
+          alt="twilio" />
         </a>
       </div>
+
       <div class="codeland-sponsors__mentor">
         <a href="https://dev.to/ben/introducing-our-july-2018-sponsors-p9f" class="codeland-sponsors__logo-wrapper">
-          <img class="codeland-sponsors__logo" src="" />
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/c7hdklzyd0q3m54cidrt.png"
+          alt="coderbyte" />
         </a>
         <a href="https://dev.to/devteam/introducing-our-april-2018-sponsors-1jfi" class="codeland-sponsors__logo-wrapper">
-          <img class="codeland-sponsors__logo" src="" />
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/axg4lr1l2vrvuamzw86h.png"
+          alt="mozilla" />
+        </a>
+        <a href="https://dev.to/devteam/introducing-our-april-2018-sponsors-1jfi" class="codeland-sponsors__logo-wrapper">
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/o0pcrzzb9mm9o4mxcdzr.png"
+          alt="vonage" />
         </a>
         <a href="https://dev.to/devteam/introducing-our-december-2018-sponsors-2579" class="codeland-sponsors__logo-wrapper">
-          <img class="codeland-sponsors__logo" src="" />
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/tnez3co4sfg712ea5n58.png"
+          alt="harper db" />
         </a>
         <a href="https://dev.to/ben/introducing-our-august-2018-sponsors-a82" class="codeland-sponsors__logo-wrapper">
-          <img class="codeland-sponsors__logo" src="" />
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/ibeplbvm51lvzl6fslt8.png"
+          alt="microsoft azure" />
+        </a>
+        <a href="https://dev.to/ben/introducing-our-august-2018-sponsors-a82" class="codeland-sponsors__logo-wrapper">
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/8m1mrxdeh62qr55lmzg9.png"
+          alt="gitcoin" />
+        </a>
+        <a href="https://dev.to/ben/introducing-our-august-2018-sponsors-a82" class="codeland-sponsors__logo-wrapper">
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/z1vkt45wpzvqahe3k92f.png"
+          alt="ergosesh" />
+        </a>
+        <a href="https://dev.to/ben/introducing-our-august-2018-sponsors-a82" class="codeland-sponsors__logo-wrapper">
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/b0swoejcgqp6lawy0mdb.png"
+          alt="launchdarkly" />
+        </a>
+        <a href="https://dev.to/ben/introducing-our-august-2018-sponsors-a82" class="codeland-sponsors__logo-wrapper">
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/8em3p7dvvu7r40wir7hh.png"
+          alt="dottech" />
         </a>
       </div>
     </div>
@@ -1284,7 +1401,7 @@ document.addEventListener("DOMContentLoaded", function() {
     presentSidecar(
       event.target.dataset.url,
       'Social Corner',
-      'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>',
+      'Powered by <a href="/connect" target="_blank">Connect</a>',
       false
     );
   }
