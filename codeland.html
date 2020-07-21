@@ -814,7 +814,7 @@ const updateScheduleInfo = scheduleData => {
     } else {
       listing.querySelector('.codeland-schedule__event-metadata').innerHTML = `${start_time.toTimeString().replace(/.*(\d{2}:\d{2}):\d{2}.*/, "$1")} - ${end_time.toTimeString().replace(/.*(\d{2}:\d{2}):\d{2}.*\((.*)\)/, "$1 $2")} `;
     }
-    
+
     listing.querySelector('.codeland-schedule__event-info h3').innerHTML = data.speaker;
     listing.querySelector('.codeland-schedule__event-title').innerHTML = data.title;
     listing.querySelector('.codeland-schedule__event-speaker-bio').innerHTML = data.bio;
@@ -1387,6 +1387,8 @@ document.addEventListener("DOMContentLoaded", function() {
       sidecarTitle.innerHTML = title;
       sidecarSubtitle.innerHTML = subtitle;
     }
+
+    window.history.pushState("", document.title, '#sidecar');
   }
 
   // EventListener for Main CTA in Livestream section
@@ -1412,6 +1414,7 @@ document.addEventListener("DOMContentLoaded", function() {
   closeButt.addEventListener('click', () => {
     if (sidecarDiv.classList.contains('showing')) {
       sidecarDiv.classList.toggle('showing');
+      history.replaceState('', document.title, '/codeland');
     }
   });
 
@@ -1440,6 +1443,16 @@ document.addEventListener("DOMContentLoaded", function() {
   });
   document.querySelectorAll('.codeland-sponsors__logo-wrapper').forEach(link => {
     link.addEventListener('click', sponsorBoothClick);
+  });
+
+  window.addEventListener("hashchange", function(e) {
+    const regex = /#sidecar/;
+    if (e.oldURL.match(regex) != null && e.newURL.match(regex) == null) {
+      // When the #sidecar hash is removed it means the user went "back"
+      // Most likely to happen in mobile: This overrides the back button feature
+      sidecarDiv.classList.remove('showing');
+      history.replaceState('', document.title, '/codeland');
+    }
   });
 
 
