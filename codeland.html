@@ -613,10 +613,14 @@
   }
 
   .codeland-sidecar > iframe {
-    height: 100%;
+    height: calc(100vh - 140px);
     border: none;
     box-shadow: 0 -1px 1px var(--header-shadow);
     width: 100vw;
+  }
+
+  body.static-navbar-config .codeland-sidecar {
+    margin-top: 56px;
   }
 
   .codeland-sidecar > header {
