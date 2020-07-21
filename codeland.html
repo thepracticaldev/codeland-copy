@@ -393,7 +393,7 @@
     background: var(--base-inverted);
     content: "";
     height: 102%;
-    left: -10vw;
+    left: -20vw;
     position: absolute;
     top: 0;
     transform: rotate(2deg);
@@ -403,7 +403,7 @@
 
   @media screen and (min-width: 768px) {
     #codeland-sponsors:before {
-      transform: rotate(3deg);
+      transform: rotate(1deg);
       top: -6px;
       height: -webkit-fill-available;
     }
@@ -434,9 +434,10 @@
   }
 
   .codeland-sponsors__logo-wrapper {
+    border: 2px solid var(--base-10);
     box-sizing: border-box;
     display: flex;
-    padding: var(--su-4);
+    padding: var(--su-6);
     position: relative;
     transition: all var(--transition-props);
     height: 240px;
@@ -444,10 +445,17 @@
   }
 
   @media screen and (min-width: 640px) {
-    .codeland-sponsors__logo-wrapper {
+    .codeland-sponsors__platinum .codeland-sponsors__logo-wrapper {
         height: 320px;
     }
   }
+
+  @media screen and (min-width: 640px) {
+    .codeland-sponsors__mentor .codeland-sponsors__logo-wrapper {
+      height: 160px;
+    }
+  }
+
 
   .codeland-sponsors__logo-wrapper:hover .codeland-sponsors__logo {
     opacity: 0.7;
@@ -474,12 +482,6 @@
   @media screen and (min-width: 640px) {
     .codeland-sponsors__mentor {
       grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  @media screen and (min-width: 640px) {
-    .codeland-sponsors__logo-wrapper {
-      height: 160px;
     }
   }
 
@@ -519,6 +521,20 @@
   }
 
 
+  .codeland-social-corner__item {
+    display: flex;
+    min-height: 180px;
+  }
+
+  .codeland-social-corner__item-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .codeland-social-corner__item > div {
+    flex: 1;
+  }
 
   /****** CAREER FAIR *******/
 
@@ -588,6 +604,7 @@
   .unauthenticated-container {
     width: 100vw;
     text-align: center;
+    padding: var(--su-4);
   }
 
   .unauthenticated-container .links {
@@ -596,10 +613,14 @@
   }
 
   .codeland-sidecar > iframe {
-    height: 100%;
+    height: calc(100vh - 140px);
     border: none;
     box-shadow: 0 -1px 1px var(--header-shadow);
     width: 100vw;
+  }
+
+  body.static-navbar-config .codeland-sidecar {
+    margin-top: 56px;
   }
 
   .codeland-sidecar > header {
@@ -682,7 +703,7 @@
 <script>
 const NOW_PLAYING_REFRESH_RATE = 15000;
 const SCHEDULE_DATA_URL = "/page/codeland_schedule";
-const SCHEDULE_REFRESH_RATE = 120000;
+const SCHEDULE_REFRESH_RATE = 60000;
 
 const LOCAL_STRING_SUPPORTED = () => {
   try{
@@ -793,7 +814,7 @@ const updateScheduleInfo = scheduleData => {
     } else {
       listing.querySelector('.codeland-schedule__event-metadata').innerHTML = `${start_time.toTimeString().replace(/.*(\d{2}:\d{2}):\d{2}.*/, "$1")} - ${end_time.toTimeString().replace(/.*(\d{2}:\d{2}):\d{2}.*\((.*)\)/, "$1 $2")} `;
     }
-    
+
     listing.querySelector('.codeland-schedule__event-info h3').innerHTML = data.speaker;
     listing.querySelector('.codeland-schedule__event-title').innerHTML = data.title;
     listing.querySelector('.codeland-schedule__event-speaker-bio').innerHTML = data.bio;
@@ -898,6 +919,12 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   };
 
+  function hideAnnouncementBanner() {
+    var announcementBanner = document.querySelector('#active-broadcast');
+    announcementBanner.classList.add('hidden');
+  }
+
+  window.addEventListener('load', hideAnnouncementBanner);
   window.addEventListener('load', checkInitialMenuPosition);
   window.addEventListener('scroll', pinNav);
   window.addEventListener('scroll', updateItem);
@@ -1106,8 +1133,8 @@ document.addEventListener("DOMContentLoaded", function() {
         </a>
         <a href="https://dev.to/devteam/introducing-our-april-2018-sponsors-1jfi" class="codeland-sponsors__logo-wrapper">
           <img class="codeland-sponsors__logo"
-          src="https://dev-to-uploads.s3.amazonaws.com/i/axg4lr1l2vrvuamzw86h.png"
-          alt="mozilla" />
+          src="https://dev-to-uploads.s3.amazonaws.com/i/tkmywanpf51nut31881r.png"
+          alt="stream" />
         </a>
         <a href="https://dev.to/devteam/introducing-our-april-2018-sponsors-1jfi" class="codeland-sponsors__logo-wrapper">
           <img class="codeland-sponsors__logo"
@@ -1116,7 +1143,7 @@ document.addEventListener("DOMContentLoaded", function() {
         </a>
         <a href="https://dev.to/devteam/introducing-our-december-2018-sponsors-2579" class="codeland-sponsors__logo-wrapper">
           <img class="codeland-sponsors__logo"
-          src="https://dev-to-uploads.s3.amazonaws.com/i/tnez3co4sfg712ea5n58.png"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/zk6npbmanjmv0zw7t8gh.png"
           alt="harper db" />
         </a>
         <a href="https://dev.to/ben/introducing-our-august-2018-sponsors-a82" class="codeland-sponsors__logo-wrapper">
@@ -1144,6 +1171,11 @@ document.addEventListener("DOMContentLoaded", function() {
           src="https://dev-to-uploads.s3.amazonaws.com/i/8em3p7dvvu7r40wir7hh.png"
           alt="dottech" />
         </a>
+        <a href="https://dev.to/ben/introducing-our-august-2018-sponsors-a82" class="codeland-sponsors__logo-wrapper">
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/67qsbyzfp3brhfeom7u4.png"
+          alt="digitalocean" />
+        </a>
       </div>
     </div>
   </section>
@@ -1157,92 +1189,70 @@ document.addEventListener("DOMContentLoaded", function() {
           </h2>
           <p class="codeland-section__description">
             Even though we’re virtual this year, we still want you to know that you
-            can still make connects with others. Here are some breakout rooms in
+            can still make connections with others. Here are some social rooms in
             Connect where you can chat and mingle with others.
           </p>
         </header>
         <div class="codeland-social-corner__body">
           <div class="codeland-social-corner__item crayons-card">
-            <div class="crayons-card__body">
-              <h4>
-                #watercooler
-              </h4>
-              <p class="fs-s mb-4">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididuntV
-              </p>
+            <div class="codeland-social-corner__item-body crayons-card__body">
+              <div>
+                <h4>
+                  #introduction
+                </h4>
+                <p class="fs-s mb-4">
+                  Say hello to fellow CodeLand attendees here from all over the
+                  world <span>🌍</span>.
+                </p>
+              </div>
               <button class="crayons-btn crayons-btn--secondary" type="button" data-url="https://dev.to/connect/codeland-rehearsal-4365">
-                Join
+                Open Connect
               </button>
             </div>
           </div>
           <div class="codeland-social-corner__item crayons-card">
-            <div class="crayons-card__body">
-              <h4>
-                #watercooler
-              </h4>
-              <p class="fs-s mb-4">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididuntV
-              </p>
+            <div class="codeland-social-corner__item-body crayons-card__body">
+              <div>
+                <h4>
+                  #show-and-tell
+                </h4>
+                <p class="fs-s mb-4">
+                  Do you have a project you want to share with others? Come share! <span>👀</span>.
+                </p>
+              </div>
               <button class="crayons-btn crayons-btn--secondary" type="button" data-url="https://dev.to/connect/codeland-rehearsal-4365">
-                Join
+                Open Connect
               </button>
             </div>
           </div>
           <div class="codeland-social-corner__item crayons-card">
-            <div class="crayons-card__body">
-              <h4>
-                #watercooler
-              </h4>
-              <p class="fs-s mb-4">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididuntV
-              </p>
+            <div class="codeland-social-corner__item-body crayons-card__body">
+              <div>
+                <h4>
+                  #code-newbie
+                </h4>
+                <p class="fs-s mb-4">
+                  Did you recently get into coding and programming? Come chat with
+                  others to share tips and advice. <span>😀</span>
+                </p>
+              </div>
               <button class="crayons-btn crayons-btn--secondary" type="button" data-url="https://dev.to/connect/codeland-rehearsal-4365">
-                Join
+                Open Connect
               </button>
             </div>
           </div>
           <div class="codeland-social-corner__item crayons-card">
-            <div class="crayons-card__body">
-              <h4>
-                #watercooler
-              </h4>
-              <p class="fs-s mb-4">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididuntV
-              </p>
+            <div class="codeland-social-corner__item-body crayons-card__body">
+              <div>
+                <h4>
+                  #watercooler
+                </h4>
+                <p class="fs-s mb-4">
+                  Chat about whatever is on your mind <span>💬</span>.
+                </p>
+              </div>
               <button class="crayons-btn crayons-btn--secondary" type="button" data-url="https://dev.to/connect/codeland-rehearsal-4365">
-                Join
-              </button>
-            </div>
-          </div>
-          <div class="codeland-social-corner__item crayons-card">
-            <div class="crayons-card__body">
-              <h4>
-                #watercooler
-              </h4>
-              <p class="fs-s mb-4">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididuntV
-              </p>
-              <button class="crayons-btn crayons-btn--secondary" type="button" data-url="https://dev.to/connect/codeland-rehearsal-4365">
-                Join
-              </button>
-            </div>
-          </div>
-          <div class="codeland-social-corner__item crayons-card">
-            <div class="crayons-card__body">
-              <h4>
-                #watercooler
-              </h4>
-              <p class="fs-s mb-4">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididuntV
-              </p>
-              <button class="crayons-btn crayons-btn--secondary" type="button" data-url="https://dev.to/connect/codeland-rehearsal-4365">
-                Join
+                Open Connect
               </button>
             </div>
           </div>
@@ -1258,31 +1268,40 @@ document.addEventListener("DOMContentLoaded", function() {
           Career fair
         </h2>
         <p class="codeland-section__description">
-          Thanks to these awesome sponsors for supporting CodeLand this year.
-          Check our their Sponsor Booths to connect with them, learn more, and ask
-          questions.
+          These sponsors invite you to learn about them and their career
+          opportunities. Reach out and get in touch with them.
         </p>
       </header>
       <div class="codeland-career-fair__body">
-        <a href="https://dev.to/devteam/introducing-our-june-2020-sponsors-4cp9" class="codeland-sponsors__logo-wrapper">
-          <figure>
-            <img class="codeland-sponsors__logo" src="" />
-          </figure>
-        </a>
-        <a href="https://dev.to/ben/introducing-our-february-2018-sponsors-584f" class="codeland-sponsors__logo-wrapper">
-          <figure>
-            <img class="codeland-sponsors__logo" src="" />
-          </figure>
-        </a>
-        <a href="https://dev.to/ben/introducing-our-july-2018-sponsors-p9f" class="codeland-sponsors__logo-wrapper">
-          <figure>
-            <img class="codeland-sponsors__logo" src="" />
-          </figure>
+        <a href="https://dev.to/ben/introducing-our-august-2018-sponsors-a82" class="codeland-sponsors__logo-wrapper">
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/ibeplbvm51lvzl6fslt8.png"
+          alt="microsoft azure" />
         </a>
         <a href="https://dev.to/devteam/introducing-our-april-2018-sponsors-1jfi" class="codeland-sponsors__logo-wrapper">
-          <figure>
-            <img class="codeland-sponsors__logo" src="" />
-          </figure>
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/tkmywanpf51nut31881r.png"
+          alt="stream" />
+        </a>
+        <a href="https://dev.to/devteam/introducing-our-april-2018-sponsors-1jfi" class="codeland-sponsors__logo-wrapper">
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/o0pcrzzb9mm9o4mxcdzr.png"
+          alt="vonage" />
+        </a>
+        <a href="https://dev.to/devteam/introducing-our-december-2018-sponsors-2579" class="codeland-sponsors__logo-wrapper">
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/zk6npbmanjmv0zw7t8gh.png"
+          alt="harper db" />
+        </a>
+        <a href="https://dev.to/ben/introducing-our-february-2018-sponsors-584f" class="codeland-sponsors__logo-wrapper">
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/c8ikykvrs51fpvls44gu.png"
+          alt="twilio" />
+        </a>
+        <a href="https://dev.to/ben/introducing-our-august-2018-sponsors-a82" class="codeland-sponsors__logo-wrapper">
+          <img class="codeland-sponsors__logo"
+          src="https://dev-to-uploads.s3.amazonaws.com/i/8m1mrxdeh62qr55lmzg9.png"
+          alt="gitcoin" />
         </a>
       </div>
     </div>
@@ -1368,6 +1387,8 @@ document.addEventListener("DOMContentLoaded", function() {
       sidecarTitle.innerHTML = title;
       sidecarSubtitle.innerHTML = subtitle;
     }
+
+    window.history.pushState("", document.title, '#sidecar');
   }
 
   // EventListener for Main CTA in Livestream section
@@ -1393,6 +1414,7 @@ document.addEventListener("DOMContentLoaded", function() {
   closeButt.addEventListener('click', () => {
     if (sidecarDiv.classList.contains('showing')) {
       sidecarDiv.classList.toggle('showing');
+      history.replaceState('', document.title, '/codeland');
     }
   });
 
@@ -1421,6 +1443,16 @@ document.addEventListener("DOMContentLoaded", function() {
   });
   document.querySelectorAll('.codeland-sponsors__logo-wrapper').forEach(link => {
     link.addEventListener('click', sponsorBoothClick);
+  });
+
+  window.addEventListener("hashchange", function(e) {
+    const regex = /#sidecar/;
+    if (e.oldURL.match(regex) != null && e.newURL.match(regex) == null) {
+      // When the #sidecar hash is removed it means the user went "back"
+      // Most likely to happen in mobile: This overrides the back button feature
+      sidecarDiv.classList.remove('showing');
+      history.replaceState('', document.title, '/codeland');
+    }
   });
 
 
