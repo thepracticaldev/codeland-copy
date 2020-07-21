@@ -1,5 +1,4 @@
-<!-- the div id 'js-hero-banner' is required for this to be properly included on the homepage! -->
-
+<!-- the div id 'hero-html-wrapper' is required for this to be properly included on the homepage! -->
 <style>
   .codeland-banner {
     background: linear-gradient(45deg, #FED602, #B6FDAA, #87CAD3, #FEA0D6);
@@ -44,23 +43,13 @@
   }
 </style>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  const codelandBanner = document.querySelector('.codeland-banner');
-  const codelandBannerCloseBtn = document.querySelector('.codeland-banner__close-btn');
 
-  codelandBannerCloseBtn.addEventListener('click', function(){
-    codelandBanner.classList.add('hidden');
-  });
-});
-</script>
-
-<div id="js-hero-banner" class="codeland-banner-container">
+<div id="hero-html-wrapper" class="codeland-banner-container">
   <section class="crayons-layout">
     <div class="codeland-banner p-4 h-auto">
 
       <a href="" class="crayons-btn crayons-btn--icon-rounded crayons-btn--ghost codeland-banner__close-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" width="24" height="24" classname="crayons-icon">
+        <svg id="js-hero-banner__x" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" width="24" height="24" classname="crayons-icon">
           <path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95      4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636l4.95 4.95z"></path>
         </svg>
       </a>
@@ -82,3 +71,4 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
   </section>
 </div>
+
