@@ -249,10 +249,6 @@
     display: block;
   }
 
-  <!-- #codeland&#45;schedule.expanded .expand&#45;schedule { -->
-  <!--   display: none; -->
-  <!-- } -->
-
   #codeland-schedule:before {
     background: var(--accent-brand);
     height: 100%;
@@ -297,6 +293,11 @@
 
   .codeland-schedule__event-link {
     color: var(--base-inverted);
+    display: none;
+  }
+
+  .codeland-schedule__event-past {
+    background-color: red;
     display: none;
   }
 
@@ -723,7 +724,10 @@ const poll = (promiseFn, time) => promiseFn()
 
 // Update the currently playing section based on schedule and current time
 const updateNowPlaying = () => (
-    new Promise(resolve => updateTalkInfo())
+    new Promise(resolve => {
+        updateTalkInfo();
+        markOlderTalks();
+      })
       .catch(function(error) {
           console.log(error);
       })
@@ -784,6 +788,20 @@ const updateTalkInfo = () => {
     }
     document.getElementById(`talk-${talkData.id}`).classList.add('codeland-schedule__event-now-playing');
   }
+};
+
+// Apply a style to talks that have already happened
+const markOlderTalks = () => {
+  var currentTimeMillis = Date.now();
+  var olderTalks;
+
+  if (scheduleData) {
+    olderTalks = scheduleData.filter(element => element.end_time_millis < currentTimeMillis);
+  }
+
+  olderTalks.forEach(element => {
+    document.getElementById(`talk-${element.id}`).classList.add('codeland-schedule__event-past');
+  });
 };
 
 const scheduleClick = (event) => {
@@ -930,17 +948,21 @@ document.addEventListener("DOMContentLoaded", function() {
   window.addEventListener('scroll', updateItem);
 
   // Expand schedule
-  const expandButton = document.querySelector('.expand-schedule');
+  const buttons = document.querySelectorAll('.expand-schedule');
 
-  expandButton.addEventListener('click', function() {
-    codelandSchedule.classList.toggle('expanded');
+  buttons.forEach((button) => {
+    let originalText = button.innerText;
 
-    if (codelandSchedule.classList.contains('expanded')) {
-      expandButton.innerText = 'See less';
-    } else {
-      expandButton.innerText = 'See all';
-      location.href = '#codeland-schedule'; // When minimizing the schedule we want to keep it in sight
-    }
+    button.addEventListener('click', function() {
+      codelandSchedule.classList.toggle('expanded');
+
+      if (codelandSchedule.classList.contains('expanded')) {
+        this.innerText = 'See less';
+      } else {
+        this.innerText = originalText;
+        location.href = '#codeland-schedule'; // When minimizing the schedule we want to keep it in sight
+      }
+    });
   });
 });
 
@@ -1086,13 +1108,20 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="codeland-content__container">
       <header>
         <h2 class="codeland-section__title">
-          Schedule & agenda
+          Schedule & Agenda
         </h2>
       </header>
+      <div class="codeland-schedule__past-container">
+      </div>
+      <div class="codeland-schedule__button-container">
+        <button id="expand-past-button" class="crayons-btn crayons-btn--secondary w-100 expand-schedule">
+          See previously
+        </button>
+      </div>
       <div class="codeland-schedule__list-container">
       </div>
       <div class="codeland-schedule__button-container">
-        <button class="crayons-btn crayons-btn--secondary w-100 expand-schedule">
+        <button id="expand-schedule-button" class="crayons-btn crayons-btn--secondary w-100 expand-schedule">
           See all
         </button>
       </div>
