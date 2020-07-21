@@ -1,17 +1,20 @@
-<!-- the div id 'js-hero-banner' is required for this to be properly included on the homepage! -->
-
+<!-- the div id 'hero-html-wrapper' is required for this to be properly included on the homepage! -->
 <style>
   .codeland-banner {
     background: linear-gradient(45deg, #FED602, #B6FDAA, #87CAD3, #FEA0D6);
     box-shadow: 0 0 0 1px var(--card-border);
     position: relative;
     box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-column-gap: var(--su-4);
   }
 
   @media screen and (min-width: 640px) {
     .codeland-banner {
       min-height: 320px;
       border-radius: var(--radius);
+      grid-template-columns: 1fr 2fr;
     }
   }
 
@@ -22,6 +25,7 @@
 
   .codeland-banner__logo img {
     max-width: 100%;
+    transform: rotateZ(-3deg);
   }
 
   .codeland-banner__description {
@@ -39,21 +43,22 @@
   }
 </style>
 
-<div id="js-hero-banner" class="codeland-banner-container">
+
+<div id="hero-html-wrapper" class="codeland-banner-container">
   <section class="crayons-layout">
-    <div class="codeland-banner crayons-layout crayons-layout--3-cols crayons-layout--3-cols--drop-right-left p-4 h-auto">
+    <div class="codeland-banner p-4 h-auto">
 
       <a href="" class="crayons-btn crayons-btn--icon-rounded crayons-btn--ghost codeland-banner__close-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" width="24" height="24" classname="crayons-icon">
+        <svg id="js-hero-banner__x" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" width="24" height="24" classname="crayons-icon">
           <path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95      4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636l4.95 4.95z"></path>
         </svg>
       </a>
 
-      <div class="codeland-banner__logo crayons-layout__sidebar-left">
-        <img src="https://dev-to-uploads.s3.amazonaws.com/i/xm46lif0lu22k1bk4cqc.png" alt="CodeLand Distributed Logo">
+      <div class="codeland-banner__logo">
+        <img src="https://dev-to-uploads.s3.us-east-2.amazonaws.com/codeland/logo-distributed.png" alt="CodeLand Distributed Logo">
       </div>
 
-      <div class="codeland-banner__description crayons-layout__content">
+      <div class="codeland-banner__description">
         <p class="ff-accent">
           July 23, 2020 - July 24, 2020
         </p>
@@ -66,3 +71,4 @@
     </div>
   </section>
 </div>
+
