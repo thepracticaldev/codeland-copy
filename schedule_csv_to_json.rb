@@ -15,7 +15,7 @@ rows.each_with_index do |row, row_index|
     key = keys[index]
 
     # These are keys we don't use in our JSON
-    next if ['minutes', 'seconds', 'delay_min', 'delay_sec'].include?(key)
+    next if ['minutes', 'seconds', 'delay_minutes', 'delay_seconds'].include?(key)
 
     if key == 'start_time'
       new_date = DateTime.parse('2020-07-23 00:00:00 EDT').to_time
