@@ -1496,6 +1496,10 @@ document.addEventListener("DOMContentLoaded", function() {
   let articleCommentCount = -1;
 
   const presentSidecar = (url, title, subtitle, watchComments = true) => {
+    if (url === window.location.href) {
+      return;
+    }
+
     if (!sidecarDiv.classList.contains('showing')) {
       sidecarDiv.classList.toggle('showing');
     }
