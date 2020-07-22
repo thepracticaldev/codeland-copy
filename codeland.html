@@ -194,6 +194,7 @@
     display: flex;
   }
 
+
   /****** LIVESTREAM *******/
 
   .codeland-livestream__container {
@@ -808,6 +809,36 @@
   }
 
   /* Technical Difficulties/outage */
+
+  .codeland-outage__container {
+    display: grid;
+    grid-column-gap: var(--su-4);
+    grid-row-gap: var(--su-4);
+    grid-template-columns: 1fr;
+    grid-template-rows: 360px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 var(--su-4);
+    box-sizing: border-box;
+    grid-template-rows: auto;
+  }
+
+  @media screen and (min-width: 640px) {
+    .codeland-outage__container {
+      grid-template-columns: 5fr 2fr;
+      grid-template-rows: auto;
+      height: fit-content;
+      width: 100%;
+    }
+  }
+
+  @media screen and (min-width: 1280px) {
+    .codeland-outage__container {
+      width: var(--site-width);
+    }
+  }
+
+
   .outage-hidden {
     display: none;
   }
@@ -1074,9 +1105,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
 </script>
 
-<section id="codeland-outage" class="outage-hidden">
-  <div class="codeland-header__container">
-    Technical difficulties: we'll be right back.
+<section id="codeland-outage" class="codeland-outage__container outage-hidden">
+  <div class="codeland-content">
+    <img src="https://dev-to-uploads.s3.us-east-2.amazonaws.com/codeland/logo-distributed.png" alt="CodeLand Distributed Logo">
+    <div>
+      <p>
+        Sorry: we're expereincing some technical difficulties at the moment.</br>
+        We're on the case, and will update this page soon!
+      </p>
+      <p>In the meantime, stay tuned to <a href="https://twitter.com/codelandconf">@codelandconf</a>  on Twitter for updates</p>
+    </div>
   </div>
 </section>
 
@@ -1116,6 +1154,7 @@ document.addEventListener("DOMContentLoaded", function() {
             </nav>
           </div>
         </div>
+
         <div class="codeland-header__cta">
           <a href="http://dev.to/shop" class="crayons-btn crayons-btn--secondary"
             target="_blank">
