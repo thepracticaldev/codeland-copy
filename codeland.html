@@ -270,7 +270,7 @@
 
   @media screen and (min-width: 640px) {
     .codeland-schedule__button-container {
-      display: grid;
+      display: none;
       grid-template-columns: 1fr 2fr 1fr;
       grid-column-gap: var(--su-4);
     }
@@ -289,16 +289,20 @@
 
   .codeland-schedule__list-container {
     margin-bottom: var(--su-4);
+    max-height: 80vh;
+    overflow-y: auto;
+    top: 16px;
+    box-shadow: inset 0px 6px 4px -10px var(--base-a40), inset 0px -6px 10px
+      -10px var(--base-a40);
   }
 
   .codeland-schedule__event-link {
     color: var(--base-inverted);
-    display: none;
   }
 
-  .codeland-schedule__event-past {
-    background-color: red;
-    display: none;
+  .codeland-schedule__event-past .codeland-schedule__event-info,
+  .codeland-schedule__event-past .codeland-schedule__event-metadata {
+    opacity: 0.5;
   }
 
   .codeland-schedule__event-link:nth-child(-n+6) {
@@ -322,7 +326,6 @@
   }
 
   @media screen and (min-width: 768px) {
-
     .codeland-schedule__event-link:hover .codeland-schedule__event-view-link {
         fill: var(--base-inverted);
         display: flex;
@@ -804,7 +807,7 @@ const markOlderTalks = () => {
   });
 };
 
-const scheduleClick = (event) => {
+const scheduleClick = (event) => {;
   event.preventDefault();
   presentSidecar(
     event.target.closest('.codeland-schedule__event-link').href,
