@@ -387,11 +387,29 @@
 
   .codeland-schedule__list-container {
     margin-bottom: var(--su-4);
-    max-height: 80vh;
+    max-height: 60vh;
     overflow-y: auto;
     top: 16px;
-    box-shadow: inset 0px 6px 4px -10px var(--base-a40), inset 0px -6px 10px
-      -10px var(--base-a40);
+    position: relative;
+    padding-top: var(--su-6);
+    padding-bottom: var(--su-6);
+    border-top: none;
+    border-bottom: 4px solid var(--body-color-inverted);
+    box-shadow: inset -24px -24px 24px 0 rgba(0,0,0,0.075);
+  }
+
+  .codeland-schedule__list-container.scrolling {
+    border-top: 4px solid var(--body-color-inverted);
+    box-shadow: inset -24px 24px 24px 0 rgba(0,0,0,0.075), inset -24px -24px 24px 0 rgba(0,0,0,0.075);
+  }
+
+  .codeland-schedule__list-container.scrolltobottom {
+    border-bottom: none;
+    box-shadow: none;
+  }
+
+  .pink-theme .codeland-schedule__list-container {
+    border-color: var(--body-color);
   }
 
   .codeland-schedule__event-link {
@@ -971,6 +989,9 @@ document.addEventListener("DOMContentLoaded", function() {
   const navContainer = document.querySelector('#codeland-header');
   const navMenu = document.querySelector('.codeland-nav');
   const navTop = navMenu.offsetTop;
+  const scheduleContainer =
+    document.querySelector('.codeland-schedule__list-container');
+
 
   const currentLocation = location.href;
 
@@ -988,6 +1009,23 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (window.scrollY >= navTop) {
       navContainer.classList.add("fixed");
+    }
+  }
+
+  function scrollScheduleContainer() {
+    if (scheduleContainer.scrollTop >= 0) {
+      scheduleContainer.classList.add('scrolling');
+    }
+
+    if (scheduleContainer.scrollTop === 0) {
+      scheduleContainer.classList.remove('scrolling');
+    }
+
+    if (scheduleContainer.scrollHeight - scheduleContainer.offsetHeight <
+      scheduleContainer.scrollTop) {
+      scheduleContainer.classList.add('scrolltobottom');
+    } else {
+      scheduleContainer.classList.remove('scrolltobottom');
     }
   }
 
@@ -1057,6 +1095,7 @@ document.addEventListener("DOMContentLoaded", function() {
     announcementBanner.classList.add('hidden');
   }
 
+  scheduleContainer.addEventListener('scroll', scrollScheduleContainer);
   window.addEventListener('load', hideAnnouncementBanner);
   window.addEventListener('load', checkInitialMenuPosition);
   window.addEventListener('scroll', pinNav);
