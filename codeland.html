@@ -387,15 +387,18 @@
 
   .codeland-schedule__list-container {
     margin-bottom: var(--su-4);
-    max-height: 60vh;
-    overflow-y: auto;
-    top: 16px;
     position: relative;
-    padding-top: var(--su-6);
-    padding-bottom: var(--su-6);
-    border-top: none;
-    border-bottom: 4px solid var(--body-color-inverted);
-    box-shadow: inset -24px -24px 24px 0 rgba(0,0,0,0.075);
+  }
+  @media screen and (min-width: 640px) {
+    .codeland-schedule__list-container {
+      padding-top: var(--su-6);
+      padding-bottom: var(--su-6);
+      max-height: 60vh;
+      overflow-y: auto;
+      border-top: none;
+      border-bottom: 4px solid var(--body-color-inverted);
+      box-shadow: inset -24px -24px 24px 0 rgba(0,0,0,0.075);
+    }
   }
 
   .codeland-schedule__list-container.scrolling {
@@ -1284,13 +1287,6 @@ document.addEventListener("DOMContentLoaded", function() {
           Schedule & Agenda
         </h2>
       </header>
-      <div class="codeland-schedule__past-container">
-      </div>
-      <div class="codeland-schedule__button-container">
-        <button id="expand-past-button" class="crayons-btn crayons-btn--secondary w-100 expand-schedule">
-          See previously
-        </button>
-      </div>
       <div class="codeland-schedule__list-container">
       </div>
       <div class="codeland-schedule__button-container">
