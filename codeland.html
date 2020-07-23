@@ -1674,6 +1674,7 @@ document.addEventListener("DOMContentLoaded", function() {
       sidecarSubtitle.innerHTML = subtitle;
     }
 
+    ahoy.track('codeland-sidecar-open', { 'article_url': url });
     window.history.pushState("", document.title, '#sidecar');
   }
 
