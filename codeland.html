@@ -1,5 +1,8 @@
 <style>
   /****** BASE SETUP *******/
+  #active-broadcast {
+    display: none !important;
+  }
   .codeland-content {
     position: relative;
     height: 100%;
@@ -838,7 +841,7 @@ const LOCAL_STRING_SUPPORTED = () => {
 var scheduleData;
 
 const sleep = time => new Promise(resolve => setTimeout(resolve, time));
-const poll = (promiseFn, time) => promiseFn()
+var poll = (promiseFn, time) => promiseFn()
               .then(sleep(time)
               .then(() => poll(promiseFn, time)));
 
