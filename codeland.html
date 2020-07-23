@@ -958,6 +958,8 @@ const updateTalkInfo = () => {
         document.querySelector('.codeland-livestream__speaker-info__footer button').textContent = 'See discussion';
         document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = `${talkData.url}#comments`;
       }
+    } else {
+      document.querySelector('.codeland-livestream__speaker-info__footer').style.display = "none";
     }
 
     var currentNowPlaying = document.querySelector('.codeland-schedule__event-now-playing')
