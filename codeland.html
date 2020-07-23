@@ -377,32 +377,43 @@
     flex-grow: 1;
   }
 
+  .codeland-schedule__list-container {
+    margin-bottom: var(--su-4);
+    position: relative;
+  }
   @media screen and (min-width: 640px) {
-    .codeland-schedule__button-container {
-      display: grid;
-      grid-template-columns: 1fr 2fr 1fr;
-      grid-column-gap: var(--su-4);
+    .codeland-schedule__list-container {
+      padding-top: var(--su-6);
+      padding-bottom: var(--su-6);
+      max-height: 60vh;
+      overflow-y: auto;
+      border-top: none;
+      border-bottom: 4px solid var(--body-color-inverted);
+      box-shadow: inset -24px -24px 24px 0 rgba(0,0,0,0.075);
     }
   }
 
-  .expand-schedule {
-    color: var(--accent-brand);
-    background: var(--base-inverted);
-    grid-column-start: 2;
+  .codeland-schedule__list-container.scrolling {
+    border-top: 4px solid var(--body-color-inverted);
+    box-shadow: inset -24px 24px 24px 0 rgba(0,0,0,0.075), inset -24px -24px 24px 0 rgba(0,0,0,0.075);
   }
 
-  .expand-schedule:hover:enabled {
-    color: var(--base-inverted);
-    background: var(--accent-brand-lighter);
+  .codeland-schedule__list-container.scrolltobottom {
+    border-bottom: none;
+    box-shadow: none;
   }
 
-  .codeland-schedule__list-container {
-    margin-bottom: var(--su-4);
+  .pink-theme .codeland-schedule__list-container {
+    border-color: var(--body-color);
   }
 
   .codeland-schedule__event-link {
     color: var(--base-inverted);
-    display: none;
+  }
+
+  .codeland-schedule__event-past .codeland-schedule__event-info,
+  .codeland-schedule__event-past .codeland-schedule__event-metadata {
+    opacity: 0.5;
   }
 
   .pink-theme .codeland-schedule__event-link {
@@ -430,7 +441,6 @@
   }
 
   @media screen and (min-width: 768px) {
-
     .codeland-schedule__event-link:hover .codeland-schedule__event-view-link {
         fill: var(--base-inverted);
         display: flex;
@@ -842,7 +852,10 @@ const poll = (promiseFn, time) => promiseFn()
 
 // Update the currently playing section based on schedule and current time
 const updateNowPlaying = () => (
-    new Promise(resolve => updateTalkInfo())
+    new Promise(resolve => {
+        updateTalkInfo();
+        markOlderTalks();
+      })
       .catch(function(error) {
           console.log(error);
       })
@@ -905,7 +918,21 @@ const updateTalkInfo = () => {
   }
 };
 
-const scheduleClick = (event) => {
+// Apply a style to talks that have already happened
+const markOlderTalks = () => {
+  var currentTimeMillis = Date.now();
+  var olderTalks;
+
+  if (scheduleData) {
+    olderTalks = scheduleData.filter(element => element.end_time_millis < currentTimeMillis);
+  }
+
+  olderTalks.forEach(element => {
+    document.getElementById(`talk-${element.id}`).classList.add('codeland-schedule__event-past');
+  });
+};
+
+const scheduleClick = (event) => {;
   event.preventDefault();
   presentSidecar(
     event.target.closest('.codeland-schedule__event-link').href,
@@ -957,6 +984,9 @@ document.addEventListener("DOMContentLoaded", function() {
   const navContainer = document.querySelector('#codeland-header');
   const navMenu = document.querySelector('.codeland-nav');
   const navTop = navMenu.offsetTop;
+  const scheduleContainer =
+    document.querySelector('.codeland-schedule__list-container');
+
 
   const currentLocation = location.href;
 
@@ -974,6 +1004,23 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (window.scrollY >= navTop) {
       navContainer.classList.add("fixed");
+    }
+  }
+
+  function scrollScheduleContainer() {
+    if (scheduleContainer.scrollTop >= 0) {
+      scheduleContainer.classList.add('scrolling');
+    }
+
+    if (scheduleContainer.scrollTop === 0) {
+      scheduleContainer.classList.remove('scrolling');
+    }
+
+    if (scheduleContainer.scrollHeight - scheduleContainer.offsetHeight <
+      scheduleContainer.scrollTop) {
+      scheduleContainer.classList.add('scrolltobottom');
+    } else {
+      scheduleContainer.classList.remove('scrolltobottom');
     }
   }
 
@@ -1045,23 +1092,34 @@ document.addEventListener("DOMContentLoaded", function() {
     announcementBanner.classList.add('hidden');
   }
 
+  function scrollToNowPlaying() {
+    var topPos = document.querySelector('.codeland-schedule__event-now-playing').parentElement.offsetTop;
+    document.querySelector('.codeland-schedule__list-container').scrollTop = topPos-10;
+  }
+
+  scheduleContainer.addEventListener('scroll', scrollScheduleContainer);
   window.addEventListener('load', hideAnnouncementBanner);
   window.addEventListener('load', checkInitialMenuPosition);
+  window.addEventListener('load', scrollToNowPlaying);
   window.addEventListener('scroll', pinNav);
   window.addEventListener('scroll', updateItem);
 
   // Expand schedule
-  const expandButton = document.querySelector('.expand-schedule');
+  const buttons = document.querySelectorAll('.expand-schedule');
 
-  expandButton.addEventListener('click', function() {
-    codelandSchedule.classList.toggle('expanded');
+  buttons.forEach((button) => {
+    let originalText = button.innerText;
 
-    if (codelandSchedule.classList.contains('expanded')) {
-      expandButton.innerText = 'See less';
-    } else {
-      expandButton.innerText = 'See all';
-      location.href = '#codeland-schedule'; // When minimizing the schedule we want to keep it in sight
-    }
+    button.addEventListener('click', function() {
+      codelandSchedule.classList.toggle('expanded');
+
+      if (codelandSchedule.classList.contains('expanded')) {
+        this.innerText = 'See less';
+      } else {
+        this.innerText = originalText;
+        location.href = '#codeland-schedule'; // When minimizing the schedule we want to keep it in sight
+      }
+    });
   });
 });
 
@@ -1220,15 +1278,10 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="codeland-content__container">
       <header>
         <h2 class="codeland-section__title">
-          Schedule & agenda
+          Schedule & Agenda
         </h2>
       </header>
       <div class="codeland-schedule__list-container">
-      </div>
-      <div class="codeland-schedule__button-container">
-        <button class="crayons-btn crayons-btn--secondary w-100 expand-schedule">
-          See all
-        </button>
       </div>
     </div>
   </section>
