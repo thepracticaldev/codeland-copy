@@ -722,10 +722,6 @@
     transform: initial;
   }
 
-  .static-navbar-config .codeland-sidecar {
-    top: 0;
-  }
-
   .codeland-display-none {
     display: none;
   }
@@ -1619,7 +1615,7 @@ document.addEventListener("DOMContentLoaded", function() {
   closeButt.addEventListener('click', () => {
     if (sidecarDiv.classList.contains('showing')) {
       sidecarDiv.classList.toggle('showing');
-      history.replaceState('', document.title, '/codeland');
+      history.replaceState('', document.title, location.href.replace(location.hash,""));
     }
   });
 
@@ -1656,7 +1652,7 @@ document.addEventListener("DOMContentLoaded", function() {
       // When the #sidecar hash is removed it means the user went "back"
       // Most likely to happen in mobile: This overrides the back button feature
       sidecarDiv.classList.remove('showing');
-      history.replaceState('', document.title, '/codeland');
+      history.replaceState('', document.title, location.href.replace(location.hash,""));
     }
   });
 
