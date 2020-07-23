@@ -1751,6 +1751,11 @@ document.addEventListener("DOMContentLoaded", function() {
     return fetch(`/api/comments?a_id=${articleRefreshId}`)
       .then((resp) => resp.json())
       .then(function(data) {
+          var commentInput = iframe.contentDocument.body.querySelector('#text-area');
+          if (commentInput && commentInput.value.length > 0) {
+            return; // User is writing something
+          }
+
           let newCount = checkCommentCount(data);
           // The first time we fetch the comment count we don't want a refresh hence the -1 check :)
           if (articleCommentCount > -1 && newCount !== articleCommentCount) {
