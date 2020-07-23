@@ -383,7 +383,9 @@
   .codeland-schedule__list-container {
     margin-bottom: var(--su-4);
     position: relative;
+    box-shadow: none;
   }
+
   @media screen and (min-width: 640px) {
     .codeland-schedule__list-container {
       padding-top: var(--su-6);
@@ -714,19 +716,22 @@
 
   .codeland-sidecar {
     position: fixed;
-    top: 56px;
+    top: 0;
     right: 0;
-    height: calc(100vh - 54px);
+    height: 100vh;
     z-index: 200;
-    transform: translateX( calc(100vw + 8px));
+    transform: translateX(100%);
     transition: var(--transition-props);
     background-color: #fff;
     box-shadow: -1px 0 1px var(--header-shadow);
     border-top: 1px solid var(--header-shadow);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
   }
 
   .codeland-sidecar.showing {
-    transform: initial;
+    transform: translateX(0);
   }
 
   .codeland-display-none {
@@ -745,10 +750,10 @@
   }
 
   .codeland-sidecar > iframe {
-    height: calc(100vh - 140px);
+    height: 100%;
     border: none;
     box-shadow: 0 -1px 1px var(--header-shadow);
-    width: 100vw;
+    width: 100%;
   }
 
   .codeland-sidecar > header {
@@ -758,6 +763,9 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    border-top: 1px solid var(--header-shadow);
+    border-bottom: 1px solid var(--header-shadow);
+    z-index: 100;
   }
 
   .codeland-sidecar--header__title {
@@ -773,17 +781,17 @@
 
   @media screen and (min-width: 640px) {
     .codeland-sidecar {
-      transform: translateX(415px);
-      transition: var(--transition-props);
+      width: 415px;
+    }
+
+    .static-navbar-config .codeland-sidecar {
+      top: var(--header-height);
+      height: calc(100vh - var(--header-height));
     }
 
     .unauthenticated-container {
       width: 415px;
       text-align: center;
-    }
-
-    .codeland-sidecar > iframe {
-      width: 415px;
     }
   }
 
@@ -794,15 +802,8 @@
      * of the viewport.
      */
 
-    .codeland-sidecar {
-      transform: translateX(calc((100vw - 900px) - ((100vw - var(--site-width)) / 2)));
-    }
-
+    .codeland-sidecar,
     .unauthenticated-container {
-      width: calc((100vw - 900px) - ((100vw - var(--site-width)) / 2));
-    }
-
-    .codeland-sidecar > iframe {
       width: calc((100vw - 900px) - ((100vw - var(--site-width)) / 2));
     }
   }
@@ -813,16 +814,8 @@
      * avoids blocking the content in the screen, meaning we can have the
      * sidecar open and not interfere with anything else on the page.
      */
-
-    .codeland-sidecar {
-      transform: translateX(calc((100vw - 1280px) - ((100vw - var(--site-width)) / 2)));
-    }
-
+    .codeland-sidecar,
     .unauthenticated-container {
-      width: calc((100vw - 1280px) - ((100vw - var(--site-width)) / 2));
-    }
-
-    .codeland-sidecar > iframe {
       width: calc((100vw - 1280px) - ((100vw - var(--site-width)) / 2));
     }
   }
@@ -1653,13 +1646,25 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     if (watchComments) {
+      // Article Sidecar
       iframe.onload = () => {
         articleRefreshId = iframe.contentDocument.getElementById('article-body').dataset.articleId;
+        if (iframe.contentDocument.body.classList.contains('static-navbar-config')) {
+          iframe.contentDocument.body.querySelector('.universal-page-content-wrapper').style.cssText = 'margin-top: 0 !important; margin-bottom: 0 !important;';
+        }
       }
     } else {
+      // Connect sidecar
       articleRefreshId = null;
       articleCommentCount = -1;
-      iframe.onload = null;
+      iframe.onload = () => {
+        iframe.contentDocument.body.style.cssText = 'overflow-y: hidden';
+        iframe.contentDocument.body.querySelector('.live-chat').style.cssText = 'height: 100vh;';
+        iframe.contentDocument.body.querySelector('.chat').style.cssText = 'height: 100%;';
+        if (iframe.contentDocument.body.classList.contains('static-navbar-config')) {
+          iframe.contentDocument.body.querySelector('.universal-page-content-wrapper').style.cssText = 'margin-top: 0 !important; margin-bottom: 0 !important;';
+        }
+      }
     }
 
     if (iframe.src !== url) {
@@ -1711,7 +1716,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const sponsorBoothClick = (event) => {
     event.preventDefault();
     presentSidecar(
-      event.target.href,
+      event.currentTarget.href,
       'Sponsor booth',
       'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>'
     );
