@@ -1023,7 +1023,7 @@ const updateScheduleInfo = scheduleData => {
   });
 
   // After the schedule is updated make sure they have an Event Listener
-  document.querySelectorAll('.codeland-schedule__event-link').forEach(link => {
+  document.querySelectorAll('.codeland-schedule__event-link:not(.codeland-schedule__event-link__no-hover)').forEach(link => {
     link.addEventListener('click', scheduleClick);
   });
 }
