@@ -707,9 +707,9 @@
 
   .codeland-sidecar {
     position: fixed;
-    top: var(--header-height);
+    top: 56px;
     right: 0;
-    height: calc(100vh - var(--header-height));
+    height: calc(100vh - 54px);
     z-index: 200;
     transform: translateX( calc(100vw + 8px));
     transition: var(--transition-props);
@@ -746,10 +746,6 @@
     border: none;
     box-shadow: 0 -1px 1px var(--header-shadow);
     width: 100vw;
-  }
-
-  body.static-navbar-config .codeland-sidecar {
-    margin-top: 56px;
   }
 
   .codeland-sidecar > header {
