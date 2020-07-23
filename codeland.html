@@ -718,7 +718,7 @@
     right: 0;
     height: calc(100vh - var(--header-height));
     z-index: 200;
-    transform: translateX( calc(100vw + 8px));
+    transform: translateX(100%);
     transition: var(--transition-props);
     background-color: #fff;
     box-shadow: -1px 0 1px var(--header-shadow);
@@ -754,10 +754,6 @@
     width: 100%;
   }
 
-  .codeland-sidecar > iframe > body {
-    overflow-y: hidden;
-  }
-
   .codeland-sidecar > header {
     background-color: var(--base-inverted);
     padding: var(--su-3) var(--su-4);
@@ -782,11 +778,6 @@
   }
 
   @media screen and (min-width: 640px) {
-    .codeland-sidecar {
-      transform: translateX(415px);
-      transition: var(--transition-props);
-    }
-
     .unauthenticated-container {
       width: 415px;
       text-align: center;
@@ -800,15 +791,9 @@
      * of the viewport.
      */
 
-    .codeland-sidecar {
-      transform: translateX(100%);
-    }
-
+    .codeland-sidecar,
     .unauthenticated-container {
       width: calc((100vw - 900px) - ((100vw - var(--site-width)) / 2));
-    }
-
-    .codeland-sidecar > iframe {
     }
   }
 
@@ -818,16 +803,8 @@
      * avoids blocking the content in the screen, meaning we can have the
      * sidecar open and not interfere with anything else on the page.
      */
-
-    .codeland-sidecar {
-      transform: translateX(calc((100vw - 1280px) - ((100vw - var(--site-width)) / 2)));
-    }
-
+    .codeland-sidecar,
     .unauthenticated-container {
-      width: calc((100vw - 1280px) - ((100vw - var(--site-width)) / 2));
-    }
-
-    .codeland-sidecar > iframe {
       width: calc((100vw - 1280px) - ((100vw - var(--site-width)) / 2));
     }
   }
