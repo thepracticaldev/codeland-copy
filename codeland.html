@@ -949,12 +949,14 @@ const updateTalkInfo = () => {
     document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
     document.querySelector('.codeland-livestream__speaker-info__footer').style.display = "flex";
 
-    if (talkData.sponsor) {
-      document.querySelector('.codeland-livestream__speaker-info__footer button').textContent = 'Learn more';
-      document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
-    } else {
-      document.querySelector('.codeland-livestream__speaker-info__footer button').textContent = 'See discussion';
-      document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = `${talkData.url}#comments`;
+    if (talkData.url) {
+      if (talkData.sponsor) {
+        document.querySelector('.codeland-livestream__speaker-info__footer button').textContent = 'Learn more';
+        document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
+      } else {
+        document.querySelector('.codeland-livestream__speaker-info__footer button').textContent = 'See discussion';
+        document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = `${talkData.url}#comments`;
+      }
     }
 
     var currentNowPlaying = document.querySelector('.codeland-schedule__event-now-playing')
