@@ -57,4 +57,4 @@ class SampleScheduleGenerator
 
 end
 
-puts SampleScheduleGenerator.new("July 2, 2020 16:30:00 UTC", "July 4, 2020 23:30:00 UTC").generate
+puts SampleScheduleGenerator.new("July 23, 2020 12:30:00 UTC", "July 23, 2020 14:30:00 UTC").generate

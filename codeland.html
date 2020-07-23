@@ -822,6 +822,41 @@
       width: calc((100vw - 1280px) - ((100vw - var(--site-width)) / 2));
     }
   }
+
+ /* Technical Difficulties/outage */
+
+ .codeland-outage__container {
+     display: grid;
+     grid-column-gap: var(--su-4);
+     grid-row-gap: var(--su-4);
+     grid-template-columns: 1fr;
+     grid-template-rows: 360px;
+     margin: 0 auto;
+     width: 100%;
+     padding: 0 var(--su-4);
+     box-sizing: border-box;
+     grid-template-rows: auto;
+   }
+
+    @media screen and (min-width: 640px) {
+     .codeland-outage__container {
+       grid-template-columns: 5fr 2fr;
+       grid-template-rows: auto;
+       height: fit-content;
+       width: 100%;
+     }
+   }
+
+    @media screen and (min-width: 1280px) {
+     .codeland-outage__container {
+       width: var(--site-width);
+     }
+   }
+
+ 
+    .outage-hidden {
+     display: none;
+   }
 </style>
 
 <script>
@@ -861,6 +896,7 @@ const fetchScheduleData = url => (
   fetch(url)
     .then((resp) => resp.json())
     .then(function(data) {
+        checkForOutage(data);
         scheduleData = calculateTimes(data.schedule);
         updateScheduleInfo(scheduleData);
     })
@@ -869,6 +905,19 @@ const fetchScheduleData = url => (
         console.log(error);
     })
 );
+
+//Check to see if we need to display a 'techincal difficulties' section
+const checkForOutage = (data) => {
+   if (data.outage) {
+     console.log('outage note found');
+     document.getElementById('codeland-outage').classList.remove('outage-hidden');
+     document.getElementById('codeland-content').classList.add('outage-hidden');
+   } else {
+     document.getElementById('codeland-outage').classList.add('outage-hidden');
+     document.getElementById('codeland-content').classList.remove('outage-hidden');
+   }
+
+  }
 
 //Calculate time data based on strings and add to schedule data
 const calculateTimes = (scheduleData) => {
@@ -922,9 +971,11 @@ const markOlderTalks = () => {
     olderTalks = scheduleData.filter(element => element.end_time_millis < currentTimeMillis);
   }
 
-  olderTalks.forEach(element => {
-    document.getElementById(`talk-${element.id}`).classList.add('codeland-schedule__event-past');
-  });
+  if (olderTalks) {
+    olderTalks.forEach(element => {
+      document.getElementById(`talk-${element.id}`).classList.add('codeland-schedule__event-past');
+    });
+  } 
 };
 
 const scheduleClick = (event) => {;
@@ -1121,7 +1172,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
 </script>
 
-<div class="codeland-content" data-no-instant>
+<section id="codeland-outage" class="codeland-outage__container outage-hidden">
+  <div class="codeland-content">
+    <img src="https://dev-to-uploads.s3.us-east-2.amazonaws.com/codeland/logo-distributed.png" alt="CodeLand Distributed Logo">
+    <div>
+      <p>
+        Sorry: we're expereincing some technical difficulties at the moment.</br>
+        We're on the case, and will update this page soon!
+      </p>
+      <p>In the meantime, stay tuned to <a href="https://twitter.com/codelandconf">@codelandconf</a>  on Twitter for updates</p>
+    </div>
+  </div>
+</section>
+
+<div id="codeland-content" class="codeland-content" data-no-instant>
   <header id="codeland-header">
     <div class="codeland-header__container">
       <div class="codeland-header__main-nav">
