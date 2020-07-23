@@ -366,25 +366,6 @@
     flex-grow: 1;
   }
 
-  @media screen and (min-width: 640px) {
-    .codeland-schedule__button-container {
-      display: none;
-      grid-template-columns: 1fr 2fr 1fr;
-      grid-column-gap: var(--su-4);
-    }
-  }
-
-  .expand-schedule {
-    color: var(--accent-brand);
-    background: var(--base-inverted);
-    grid-column-start: 2;
-  }
-
-  .expand-schedule:hover:enabled {
-    color: var(--base-inverted);
-    background: var(--accent-brand-lighter);
-  }
-
   .codeland-schedule__list-container {
     margin-bottom: var(--su-4);
     position: relative;
@@ -1098,9 +1079,15 @@ document.addEventListener("DOMContentLoaded", function() {
     announcementBanner.classList.add('hidden');
   }
 
+  function scrollToNowPlaying() {
+    var topPos = document.querySelector('.codeland-schedule__event-now-playing').parentElement.offsetTop;
+    document.querySelector('.codeland-schedule__list-container').scrollTop = topPos-10;
+  }
+
   scheduleContainer.addEventListener('scroll', scrollScheduleContainer);
   window.addEventListener('load', hideAnnouncementBanner);
   window.addEventListener('load', checkInitialMenuPosition);
+  window.addEventListener('load', scrollToNowPlaying);
   window.addEventListener('scroll', pinNav);
   window.addEventListener('scroll', updateItem);
 
@@ -1288,11 +1275,6 @@ document.addEventListener("DOMContentLoaded", function() {
         </h2>
       </header>
       <div class="codeland-schedule__list-container">
-      </div>
-      <div class="codeland-schedule__button-container">
-        <button id="expand-schedule-button" class="crayons-btn crayons-btn--secondary w-100 expand-schedule">
-          See all
-        </button>
       </div>
     </div>
   </section>
