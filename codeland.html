@@ -715,7 +715,6 @@
   .codeland-sidecar {
     position: fixed;
     top: var(--header-height);
-    bottom: 0;
     right: 0;
     height: calc(100vh - var(--header-height));
     z-index: 200;
@@ -1642,7 +1641,7 @@ document.addEventListener("DOMContentLoaded", function() {
   let articleCommentCount = -1;
 
   const presentSidecar = (url, title, subtitle, watchComments = true) => {
-    document.body.style.cssText = 'height: 100%; margin: 0; padding-top: 0; overflow-y: hidden';
+    // document.body.style.cssText = 'height: 100%; margin: 0; padding-top: 0; overflow-y: hidden';
     // document.contents().find('.top-bar).hide()
 
     if (url === window.location.href) {
@@ -1662,13 +1661,23 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     if (watchComments) {
+      // Article Sidecar
       iframe.onload = () => {
         articleRefreshId = iframe.contentDocument.getElementById('article-body').dataset.articleId;
+        if (iframe.contentDocument.body.classList.contains('static-navbar-config')) {
+          iframe.contentDocument.body.querySelector('.universal-page-content-wrapper').style.cssText = 'margin-top: 0 !important; margin-bottom: 0 !important;';
+        }
       }
     } else {
+      // Connect sidecar
       articleRefreshId = null;
       articleCommentCount = -1;
-      iframe.onload = null;
+      iframe.onload = () => {
+        iframe.contentDocument.body.style.cssText = 'overflow-y: hidden';
+        if (iframe.contentDocument.body.classList.contains('static-navbar-config')) {
+          iframe.contentDocument.body.querySelector('.universal-page-content-wrapper').style.cssText = 'margin-top: 0 !important; margin-bottom: 0 !important;';
+        }
+      }
     }
 
     if (iframe.src !== url) {
