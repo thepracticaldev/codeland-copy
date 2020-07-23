@@ -1716,7 +1716,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const sponsorBoothClick = (event) => {
     event.preventDefault();
     presentSidecar(
-      event.target.href,
+      event.currentTarget.href,
       'Sponsor booth',
       'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>'
     );
