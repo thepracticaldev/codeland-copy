@@ -707,9 +707,9 @@
 
   .codeland-sidecar {
     position: fixed;
-    top: var(--header-height);
+    top: 56px;
     right: 0;
-    height: calc(100vh - var(--header-height));
+    height: calc(100vh - 54px);
     z-index: 200;
     transform: translateX( calc(100vw + 8px));
     transition: var(--transition-props);
@@ -720,10 +720,6 @@
 
   .codeland-sidecar.showing {
     transform: initial;
-  }
-
-  .static-navbar-config .codeland-sidecar {
-    top: 0;
   }
 
   .codeland-display-none {
@@ -746,10 +742,6 @@
     border: none;
     box-shadow: 0 -1px 1px var(--header-shadow);
     width: 100vw;
-  }
-
-  body.static-navbar-config .codeland-sidecar {
-    margin-top: 56px;
   }
 
   .codeland-sidecar > header {
@@ -1623,7 +1615,7 @@ document.addEventListener("DOMContentLoaded", function() {
   closeButt.addEventListener('click', () => {
     if (sidecarDiv.classList.contains('showing')) {
       sidecarDiv.classList.toggle('showing');
-      history.replaceState('', document.title, '/codeland');
+      history.replaceState('', document.title, location.href.replace(location.hash,""));
     }
   });
 
@@ -1660,7 +1652,7 @@ document.addEventListener("DOMContentLoaded", function() {
       // When the #sidecar hash is removed it means the user went "back"
       // Most likely to happen in mobile: This overrides the back button feature
       sidecarDiv.classList.remove('showing');
-      history.replaceState('', document.title, '/codeland');
+      history.replaceState('', document.title, location.href.replace(location.hash,""));
     }
   });
 
