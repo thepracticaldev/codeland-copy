@@ -716,9 +716,9 @@
 
   .codeland-sidecar {
     position: fixed;
-    top: var(--header-height);
+    top: 0;
     right: 0;
-    height: calc(100vh - var(--header-height));
+    height: 100vh;
     z-index: 200;
     transform: translateX(100%);
     transition: var(--transition-props);
@@ -727,7 +727,7 @@
     border-top: 1px solid var(--header-shadow);
     display: flex;
     flex-direction: column;
-    width: 415px;
+    width: 100%;
   }
 
   .codeland-sidecar.showing {
@@ -780,6 +780,15 @@
   }
 
   @media screen and (min-width: 640px) {
+    .codeland-sidecar {
+      width: 415px;
+    }
+
+    .static-navbar-config .codeland-sidecar {
+      top: var(--header-height);
+      height: calc(100vh - var(--header-height));
+    }
+
     .unauthenticated-container {
       width: 415px;
       text-align: center;
