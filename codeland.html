@@ -501,6 +501,10 @@
     opacity: 1.0;
   }
 
+  .codeland-schedule__event-link__no-hover {
+    pointer-events: none;
+  }
+
   .codeland-schedule__event-description {
     opacity: 0.6;
   }
@@ -945,7 +949,6 @@ const updateTalkInfo = () => {
     document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
     document.querySelector('.codeland-livestream__speaker-info__footer').style.display = "flex";
 
-
     if (talkData.sponsor) {
       document.querySelector('.codeland-livestream__speaker-info__footer button').textContent = 'Learn more';
       document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
@@ -1011,6 +1014,11 @@ const updateScheduleInfo = scheduleData => {
     listing.querySelector('.codeland-schedule__event-title').innerHTML = data.title;
     listing.querySelector('.codeland-schedule__event-speaker-bio').innerHTML = data.bio;
     listing.querySelector('a.codeland-schedule__event-link').href = data.url;
+
+    if (data.url === "") {
+      listing.querySelector('a.codeland-schedule__event-link').classList.add('codeland-schedule__event-link__no-hover');
+    }
+
     listing_container.append(listing);
   });
 
