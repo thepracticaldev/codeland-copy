@@ -714,19 +714,23 @@
 
   .codeland-sidecar {
     position: fixed;
-    top: 56px;
+    top: var(--header-height);
+    bottom: 0;
     right: 0;
-    height: calc(100vh - 54px);
+    height: calc(100vh - var(--header-height));
     z-index: 200;
     transform: translateX( calc(100vw + 8px));
     transition: var(--transition-props);
     background-color: #fff;
     box-shadow: -1px 0 1px var(--header-shadow);
     border-top: 1px solid var(--header-shadow);
+    display: flex;
+    flex-direction: column;
+    width: 415px;
   }
 
   .codeland-sidecar.showing {
-    transform: initial;
+    transform: translateX(0);
   }
 
   .codeland-display-none {
@@ -745,10 +749,14 @@
   }
 
   .codeland-sidecar > iframe {
-    height: calc(100vh - 140px);
+    height: 100%;
     border: none;
     box-shadow: 0 -1px 1px var(--header-shadow);
-    width: 100vw;
+    width: 100%;
+  }
+
+  .codeland-sidecar > iframe > body {
+    overflow-y: hidden;
   }
 
   .codeland-sidecar > header {
@@ -758,6 +766,9 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    border-top: 1px solid var(--header-shadow);
+    border-bottom: 1px solid var(--header-shadow);
+    z-index: 100;
   }
 
   .codeland-sidecar--header__title {
@@ -781,10 +792,6 @@
       width: 415px;
       text-align: center;
     }
-
-    .codeland-sidecar > iframe {
-      width: 415px;
-    }
   }
 
   @media screen and (min-width: 1280px) {
@@ -795,7 +802,7 @@
      */
 
     .codeland-sidecar {
-      transform: translateX(calc((100vw - 900px) - ((100vw - var(--site-width)) / 2)));
+      transform: translateX(100%);
     }
 
     .unauthenticated-container {
@@ -803,7 +810,6 @@
     }
 
     .codeland-sidecar > iframe {
-      width: calc((100vw - 900px) - ((100vw - var(--site-width)) / 2));
     }
   }
 
@@ -1631,6 +1637,9 @@ document.addEventListener("DOMContentLoaded", function() {
   let articleCommentCount = -1;
 
   const presentSidecar = (url, title, subtitle, watchComments = true) => {
+    document.body.style.cssText = 'height: 100%; margin: 0; padding-top: 0; overflow-y: hidden';
+    // document.contents().find('.top-bar).hide()
+
     if (url === window.location.href) {
       return;
     }
