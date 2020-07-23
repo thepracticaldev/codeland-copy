@@ -947,9 +947,10 @@ const updateTalkInfo = () => {
     document.querySelector('.codeland-livestream__info-title h2').textContent = `${talkData.title} by ${talkData.speaker}`;
     document.querySelector('.codeland-livestream__speaker-info div p').innerHTML = talkData.bio;
     document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
-    document.querySelector('.codeland-livestream__speaker-info__footer').style.display = "flex";
 
     if (talkData.url) {
+      document.querySelector('.codeland-livestream__speaker-info__footer').style.display = "flex";
+
       if (talkData.sponsor) {
         document.querySelector('.codeland-livestream__speaker-info__footer button').textContent = 'Learn more';
         document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
