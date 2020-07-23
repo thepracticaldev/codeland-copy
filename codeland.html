@@ -1641,9 +1641,6 @@ document.addEventListener("DOMContentLoaded", function() {
   let articleCommentCount = -1;
 
   const presentSidecar = (url, title, subtitle, watchComments = true) => {
-    // document.body.style.cssText = 'height: 100%; margin: 0; padding-top: 0; overflow-y: hidden';
-    // document.contents().find('.top-bar).hide()
-
     if (url === window.location.href) {
       return;
     }
@@ -1674,6 +1671,8 @@ document.addEventListener("DOMContentLoaded", function() {
       articleCommentCount = -1;
       iframe.onload = () => {
         iframe.contentDocument.body.style.cssText = 'overflow-y: hidden';
+        iframe.contentDocument.body.querySelector('.live-chat').style.cssText = 'height: 100vh;';
+        iframe.contentDocument.body.querySelector('.chat').style.cssText = 'height: 100%;';
         if (iframe.contentDocument.body.classList.contains('static-navbar-config')) {
           iframe.contentDocument.body.querySelector('.universal-page-content-wrapper').style.cssText = 'margin-top: 0 !important; margin-bottom: 0 !important;';
         }
