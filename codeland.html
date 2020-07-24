@@ -145,9 +145,6 @@
   @media screen and (min-width: 640px) {
     .codeland-header__cta {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      grid-column-gap: var(--su-2);
-      grid-template-rows: max-content;
       align-content: center;
     }
   }
@@ -857,127 +854,10 @@
 </style>
 
 <script>
-const NOW_PLAYING_REFRESH_RATE = 15000;
-const SCHEDULE_DATA_URL = "/page/codeland_schedule";
-const SCHEDULE_REFRESH_RATE = 60000;
-
-const LOCAL_STRING_SUPPORTED = () => {
-  try{
-    new Date().toLocaleTimeString('i');
-  } catch(e) {
-    return e.name === 'RangeError';
-  }
-  return false;
-}
-
-var scheduleData;
-
 const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 var poll = (promiseFn, time) => promiseFn()
               .then(sleep(time)
               .then(() => poll(promiseFn, time)));
-
-// Update the currently playing section based on schedule and current time
-const updateNowPlaying = () => (
-    new Promise(resolve => {
-        updateTalkInfo();
-        markOlderTalks();
-      })
-      .catch(function(error) {
-          console.log(error);
-      })
-);
-
-// Look for updated schedule data
-const fetchScheduleData = url => (
-  fetch(url)
-    .then((resp) => resp.json())
-    .then(function(data) {
-        checkForOutage(data);
-        scheduleData = calculateTimes(data.schedule);
-        updateScheduleInfo(scheduleData);
-    })
-    .then(updateNowPlaying)
-    .catch(function(error) {
-        console.log(error);
-    })
-);
-
-//Check to see if we need to display a 'techincal difficulties' section
-const checkForOutage = (data) => {
-   if (data.outage) {
-     console.log('outage note found');
-     document.getElementById('codeland-outage').classList.remove('outage-hidden');
-     document.getElementById('codeland-content').classList.add('outage-hidden');
-   } else {
-     document.getElementById('codeland-outage').classList.add('outage-hidden');
-     document.getElementById('codeland-content').classList.remove('outage-hidden');
-   }
-
-  }
-
-//Calculate time data based on strings and add to schedule data
-const calculateTimes = (scheduleData) => {
-  scheduleData.forEach(data => {
-    data.start_time_millis= Date.parse(data.start_time);
-    data.end_time_millis = Date.parse(data.end_time);
-  });
-  return scheduleData;
-}
-
-// Update the contents of a div with new data based on the current time
-const updateTalkInfo = () => {
-
-  var currentTimeMillis = Date.now();
-  var talkData;
-
-  if (scheduleData) {
-    talkData = scheduleData.find(element => element.start_time_millis <= currentTimeMillis && element.end_time_millis > currentTimeMillis);
-  }
-
-  if (talkData) {
-    document.querySelector('a.codeland-livestream__info-link').href = talkData.url;
-    document.querySelector('.codeland-livestream__info-title h2').textContent = `${talkData.title} by ${talkData.speaker}`;
-    document.querySelector('.codeland-livestream__speaker-info div p').innerHTML = talkData.bio;
-    document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
-
-    if (talkData.url) {
-      document.querySelector('.codeland-livestream__speaker-info__footer').style.display = "flex";
-
-      if (talkData.sponsor) {
-        document.querySelector('.codeland-livestream__speaker-info__footer button').textContent = 'Learn more';
-        document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = talkData.url;
-      } else {
-        document.querySelector('.codeland-livestream__speaker-info__footer button').textContent = 'See discussion';
-        document.querySelector('.codeland-livestream__speaker-info div button').dataset.url = `${talkData.url}#comments`;
-      }
-    } else {
-      document.querySelector('.codeland-livestream__speaker-info__footer').style.display = "none";
-    }
-
-    var currentNowPlaying = document.querySelector('.codeland-schedule__event-now-playing')
-    if(currentNowPlaying) {
-      currentNowPlaying.classList.remove('codeland-schedule__event-now-playing');
-    }
-    document.getElementById(`talk-${talkData.id}`).classList.add('codeland-schedule__event-now-playing');
-  }
-};
-
-// Apply a style to talks that have already happened
-const markOlderTalks = () => {
-  var currentTimeMillis = Date.now();
-  var olderTalks;
-
-  if (scheduleData) {
-    olderTalks = scheduleData.filter(element => element.end_time_millis < currentTimeMillis);
-  }
-
-  if (olderTalks) {
-    olderTalks.forEach(element => {
-      document.getElementById(`talk-${element.id}`).classList.add('codeland-schedule__event-past');
-    });
-  } 
-};
 
 const scheduleClick = (event) => {;
   event.preventDefault();
@@ -987,49 +867,6 @@ const scheduleClick = (event) => {;
     'Find all these articles in <a href="/t/codeland" target="_blank">#codeland</a>'
   );
 }
-
-const updateScheduleInfo = scheduleData => {
-  document.querySelectorAll('.codeland-schedule__event-link').forEach(element => {
-    element.removeEventListener('click');
-    element.remove();
-  });
-  var listing_container =
-    document.querySelector('.codeland-schedule__list-container');
-  var template = document.querySelector('#schedule-entry-template');
-  scheduleData.forEach(data => {
-    var start_time = new Date(Date.parse(data.start_time));
-    var end_time = new Date(Date.parse(data.end_time));
-
-    var listing = template.content.cloneNode(true);
-    listing.querySelector('.codeland-schedule__event').id = `talk-${data.id}`;
-    if (LOCAL_STRING_SUPPORTED) {
-      listing.querySelector('.codeland-schedule__event-metadata').innerHTML = `${start_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'})} - ${end_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZoneName: 'short'})} `;
-    } else {
-      listing.querySelector('.codeland-schedule__event-metadata').innerHTML = `${start_time.toTimeString().replace(/.*(\d{2}:\d{2}):\d{2}.*/, "$1")} - ${end_time.toTimeString().replace(/.*(\d{2}:\d{2}):\d{2}.*\((.*)\)/, "$1 $2")} `;
-    }
-
-    listing.querySelector('.codeland-schedule__event-info h3').innerHTML = data.speaker;
-    listing.querySelector('.codeland-schedule__event-title').innerHTML = data.title;
-    listing.querySelector('.codeland-schedule__event-speaker-bio').innerHTML = data.bio;
-    listing.querySelector('a.codeland-schedule__event-link').href = data.url;
-
-    if (data.url === "") {
-      listing.querySelector('a.codeland-schedule__event-link').classList.add('codeland-schedule__event-link__no-hover');
-    }
-
-    listing_container.append(listing);
-  });
-
-  // After the schedule is updated make sure they have an Event Listener
-  document.querySelectorAll('.codeland-schedule__event-link:not(.codeland-schedule__event-link__no-hover)').forEach(link => {
-    link.addEventListener('click', scheduleClick);
-  });
-}
-
-//kick off main polling loops
-poll(() => fetchScheduleData(SCHEDULE_DATA_URL), SCHEDULE_REFRESH_RATE);
-poll(() => updateNowPlaying(), NOW_PLAYING_REFRESH_RATE);
-
 
 // Nav menu
 document.addEventListener("DOMContentLoaded", function() {
@@ -1144,17 +981,18 @@ document.addEventListener("DOMContentLoaded", function() {
     announcementBanner.classList.add('hidden');
   }
 
-  function scrollToNowPlaying() {
-    var topPos = document.querySelector('.codeland-schedule__event-now-playing').parentElement.offsetTop;
-    document.querySelector('.codeland-schedule__list-container').scrollTop = topPos-10;
+  function addClickHandlerToScheduleItems() {
+    document.querySelectorAll('.codeland-schedule__event-link:not(.codeland-schedule__event-link__no-hover)').forEach(link => {
+    link.addEventListener('click', scheduleClick);
+  });
   }
 
   scheduleContainer.addEventListener('scroll', scrollScheduleContainer);
   window.addEventListener('load', hideAnnouncementBanner);
   window.addEventListener('load', checkInitialMenuPosition);
-  window.addEventListener('load', scrollToNowPlaying);
   window.addEventListener('scroll', pinNav);
   window.addEventListener('scroll', updateItem);
+  window.addEventListener('load', addClickHandlerToScheduleItems);
 
   // Expand schedule
   const buttons = document.querySelectorAll('.expand-schedule');
@@ -1222,18 +1060,9 @@ document.addEventListener("DOMContentLoaded", function() {
       </div>
       <div class="codeland-header__cta">
         <a href="http://dev.to/shop" class="crayons-btn crayons-btn--secondary"
-          target="_blank">
+        target="_blank">
           Visit shop
         </a>
-        <div class="crayons-tooltip">
-          <a href="https://ti.to/codenewbie/codeland-distributed"
-            class="crayons-btn w-100" target="_blank">
-            Check in
-          </a>
-          <span class="crayons-tooltip__item">
-            Register to claim your CodeLand badge
-          </span>
-        </div>
       </div>
     </div>
   </header>
@@ -1247,9 +1076,10 @@ document.addEventListener("DOMContentLoaded", function() {
       <aside class="codeland-livestream__speaker-info crayons-card">
         <div class="crayons-card__body">
           <p class="fs-base">
-            We’re getting ready for CodeLand, and we can’t wait to see you there!
-            <br><br>
-            <strong>Note:</strong> You won’t be able to click on most links, but we hope this gives you a sense of the schedule.
+            Thanks for attending CodeLand 2020, we hope you had an amazing time!
+          </p>
+          <p class="fs-base">
+            You'll find all twelve hours of CodeLand 2020 available for replay here. Individual talks and slides are also available via the schedule grid.
           </p>
           <div class="codeland-livestream__speaker-info__footer">
             <button class="crayons-btn crayons-btn--secondary w-100" type="button" data-url="">
@@ -1264,7 +1094,7 @@ document.addEventListener("DOMContentLoaded", function() {
           </span>
           <div class="codeland-livestream__info-title">
             <h2>
-              Welcome to CodeLand: Distributed 2020!
+              Re-watch the CodeLand: Distributed 2020 Livestream!
             </h2>
             <h2 class="codeland-livestream__info-helper fw-normal">
               <span>
@@ -1347,6 +1177,1071 @@ document.addEventListener("DOMContentLoaded", function() {
         </h2>
       </header>
       <div class="codeland-schedule__list-container">
+      
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-100">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">09:00 AM - 09:02 AM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Peter Kim Frank</h3>
+              <h4 class="codeland-schedule__event-title">Welcome Message</h4>
+              <div class="codeland-schedule__event-speaker-bio">Welcome to CodeLand:Distributed! We're so excited that you're joining us today. Stay tuned for a full-day of awesome talks, live panels, giveaways, and more!</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/saronyitbarek/what-i-learned-from-6-years-of-building-codenewbie-ba0" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-103">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">09:02 AM - 09:29 AM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Saron Yitbarek</h3>
+              <h4 class="codeland-schedule__event-title">
+      What I Learned from 6 Years of Building CodeNewbie</h4>
+              <div class="codeland-schedule__event-speaker-bio">Saron Yitbarek is an entrepreneur and founder of CodeNewbie, now owned by DEV. She's also a developer, speaker, and podcaster.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/erikaheidi/the-art-of-programming-with-erika-heidi-261" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-104">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">09:29 AM - 09:41 AM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Erika Heidi</h3>
+              <h4 class="codeland-schedule__event-title">The Art of Programming</h4>
+              <div class="codeland-schedule__event-speaker-bio">Erika Heidi is a DevOps Software Engineer turned writer, passionate about community, open source, and building things. She works as senior technical writer at DigitalOcean.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-106">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">09:41 AM - 09:43 AM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Saron Yitbarek</h3>
+              <h4 class="codeland-schedule__event-title">Emcee Announcement</h4>
+              <div class="codeland-schedule__event-speaker-bio">Up Next: "Live Exploiting Your OS Dependencies" with Brian Vermeer</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/brianverm/live-exploiting-your-open-source-dependencies-with-brian-vermeer-3g" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-107">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">09:43 AM - 10:01 AM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Brian Vermeer</h3>
+              <h4 class="codeland-schedule__event-title">Live Exploiting Your OS Dependencies</h4>
+              <div class="codeland-schedule__event-speaker-bio">Brian Vermeer is a Developer Advocate for Snyk and Software Engineer with over 10 years of hands-on experience in creating and maintaining software. He is passionate about Java, (Pure) Functional Programming and Cybersecurity. Brian is an Oracle Groundbreaker Ambassador, Utrecht JUG Co-lead, Virtual JUG organizer and Co-lead at MyDevSecOps. He is a regular international speaker on mostly Java-related conferences like JavaOne, Oracle Code One, Devoxx BE, Devoxx UK, Jfokus, JavaZone and many more. Besides all that Brian is a military reserve for the Royal Netherlands Air Force and a Taekwondo Master / Teacher.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-109">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">10:01 AM - 10:02 AM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Saron Yitbarek</h3>
+              <h4 class="codeland-schedule__event-title">Emcee Announcement</h4>
+              <div class="codeland-schedule__event-speaker-bio">Up Next: "Printing Floating Point Numbers Is Surprisingly Hard!" with Gargi Sharma</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/gs0510/printing-floating-point-numbers-with-gargi-sharma-24fl" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-110">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">10:02 AM - 10:16 AM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Gargi Sharma</h3>
+              <h4 class="codeland-schedule__event-title">Printing Floating Point Numbers is Surprisingly Hard!</h4>
+              <div class="codeland-schedule__event-speaker-bio">Gargi Sharma is a software engineer who contributes to OCaml open source at Tarides. Previously Gargi has worked at Bloomberg, Uber and eBay. Gargi also attended the Recurse Center.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-114">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">10:16 AM - 10:41 AM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Gargi Sharma, Brian Vermeer, Erika Heidi, and Saron Yitbarek</h3>
+              <h4 class="codeland-schedule__event-title">Live Speaker Panel</h4>
+              <div class="codeland-schedule__event-speaker-bio">A panel discussion with our recent speakers.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/alexlsalt/being-utterly-fearless-in-your-pursuit-of-learning-to-code-with-alex-morton-5o0" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-115">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">10:41 AM - 10:54 AM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Alex Morton
+      </h3>
+              <h4 class="codeland-schedule__event-title">Being Utterly Fearless in Your Pursuit of Learning to Code</h4>
+              <div class="codeland-schedule__event-speaker-bio">Alex Morton is a California native lost in France who fell in love with coding as a hobby while working in customer support. At the end of last year, Alex left said customer support job to pursue programming on a full-time basis. When she's not coding, she loves reading as much as possible and hanging out with her dachshund, Nelson.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/joshpuetz/salary-negotiation-for-people-that-hate-to-negotiate-with-josh-puetz-1f76" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-117">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">10:54 AM - 11:12 AM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Josh Puetz</h3>
+              <h4 class="codeland-schedule__event-title">Salary Negotiation for People That Hate to Negotiate</h4>
+              <div class="codeland-schedule__event-speaker-bio">Josh Puetz is an engineer with over 20 years of experience making mistakes and telling stories about them. A veteran of several startups, he’s currently a principal software engineer at DEV where he creates software to support sustainable Internet communities. He lives in picturesque Door County, Wisconsin with his husband and daughter, where he enjoys coffee, CrossFit, and writing about himself in the third person.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-119">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">11:12 AM - 11:12 AM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Saron Yitbarek</h3>
+              <h4 class="codeland-schedule__event-title">Emcee Announcement</h4>
+              <div class="codeland-schedule__event-speaker-bio">Up Next: A Message From CoderByte</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/coderbyte/hi-codeland-we-re-coderbyte-and-we-re-here-to-help-you-level-up-your-interview-skills-g2k" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-120">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">11:12 AM - 11:14 AM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Daniel Borowski</h3>
+              <h4 class="codeland-schedule__event-title">A Message From CoderByte</h4>
+              <div class="codeland-schedule__event-speaker-bio">Coderbyte is the #1 coding challenge platform for interview prep. They offer a collection of code challenges and web development courses that can help you prepare for upcoming job interviews. The coding challenges range in difficulty and they can all be completed straight in their online editor!</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-122">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">11:14 AM - 11:40 AM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Alex Morton, Josh Puetz, Saron Yitbarek, Scott Hanselman</h3>
+              <h4 class="codeland-schedule__event-title">Live Speaker Panel</h4>
+              <div class="codeland-schedule__event-speaker-bio">A panel discussion with our recent speakers.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/luckynkosi/to-kill-a-working-drone-flying-drones-with-twitter-bananas-and-webapis-with-lucky-nkosi-4l98" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-124">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">11:40 AM - 11:57 AM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Lucky Nkosi
+      </h3>
+              <h4 class="codeland-schedule__event-title">To Kill a Working Drone... Flying Drones With Twitter, Bananas and WebAPIs</h4>
+              <div class="codeland-schedule__event-speaker-bio">Lucky is a Software Engineer in the R&amp;D division of BBD Software and a game development lecturer at the Digitals Arts division of Wits University in Johannesburg. He has experience in building and maintaining enterprise banking software with varying tech-stacks; all the way from VB6 and .Net to web and cloud technologies. Lucky is interested in IoT and passionate about making technology accessible through the web.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-126">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">11:57 AM - 11:59 AM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Saron Yitbarek</h3>
+              <h4 class="codeland-schedule__event-title">Emcee Announcement</h4>
+              <div class="codeland-schedule__event-speaker-bio">Up Next: ErgoBreak &amp; Meditation Session</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/ergosesh/hi-we-re-ergosesh-and-we-are-thrilled-to-be-at-codeland-3lbk" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-127">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">11:59 AM - 12:40 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Brett Weiss &amp; Daragh Byrne</h3>
+              <h4 class="codeland-schedule__event-title">ErgoBreak &amp; Meditation Session</h4>
+              <div class="codeland-schedule__event-speaker-bio">ErgoSesh is a team of ergonomic specialists revolutionizing the standard ergonomic assessment. During this ErgoBreak, Brett guides us through some simple stretching.
+      <br>
+      Daragh Byrne is on a mission to teach programmers everywhere that their mental capacities can become even more fabulous through attention regulation training – otherwise known as meditation. Daragh is the person behind the site Coding Mindfully and the author of "<a href="https://dev.to/daraghbyrne/25-ways-mindfulness-and-meditation-help-in-my-career-as-a-software-developer-4anb" target="_blank"> 25 ways mindfulness and meditation help in my career as a software developer</a>". Join us for this meditation break.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/nocnica/changing-the-default-branch-name-on-github-3aon" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-128">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">12:40 PM - 12:47 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Nočnica Fee</h3>
+              <h4 class="codeland-schedule__event-title">Live Coding: Renaming Your master branch</h4>
+              <div class="codeland-schedule__event-speaker-bio">Nočnica Fee is a developer advocate with New Relic. In her free time she's an amateur hardware hacker, circuit bender, and terrible carpenter. Nica for short ;)</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/github/hi-we-re-github-and-we-re-excited-to-be-at-codeland-32dg" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-129">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">12:47 PM - 12:52 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Vanessa Gennarelli</h3>
+              <h4 class="codeland-schedule__event-title">Lemonade: The World We Can Shape Out of Breakdowns and Breakthroughs</h4>
+              <div class="codeland-schedule__event-speaker-bio">Vanessa Gennarelli is the Director of GitHub Education, helping the next generation of developers make their best work. GitHub Education has helped 2.1 million developers learn to code, and supports more than 19,000 schools worldwide. She holds a Master’s in Technology, Innovation and Education from Harvard University and is a former Research Intern at the MIT Media Lab.
+      <br>
+      Thank you GitHub for being a patron sponsor! </div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-131">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">12:52 PM - 12:53 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Saron Yitbarek</h3>
+              <h4 class="codeland-schedule__event-title">Emcee Announcement</h4>
+              <div class="codeland-schedule__event-speaker-bio">Up Next: "An Introduction To IoT" with Joe Karlsson</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/joekarlsson/an-introduction-to-iot-with-joe-karlsson-2b8l" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-132">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">12:53 PM - 01:07 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Joe Karlsson</h3>
+              <h4 class="codeland-schedule__event-title">An Introduction to IoT</h4>
+              <div class="codeland-schedule__event-speaker-bio">Joe Karlsson is a software engineer turned Developer Advocate at MongoDB. He comes from the frozen tundra of Minneapolis, Minnesota (and yes, it does get really cold here, and no, not everyone here has the accent from the movie, Fargo). Joe has been primarily a Node and JavaScript engineer. He has been writing, teaching, and talking about code his entire career. Sharing what he knows and continuing to learn about programming is truly the thing he loves doing the most.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/terceranexus6/freedom-of-security-with-paula-de-la-hoz-51fk" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-134">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">01:07 PM - 01:20 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Paula de la Hoz</h3>
+              <h4 class="codeland-schedule__event-title">Freedom of Security</h4>
+              <div class="codeland-schedule__event-speaker-bio">Paula de la Hoz is 24 years old, working in Redteam at Telefonica, based in Madrid. Coding since age 15, her favorite languages are Python, C, and Bash. She loves hardware hacking, building electronics for security, and enjoys teaching and mentoring in her spare time.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-136">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">01:20 PM - 01:45 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Joe Karlsson, Lucky Nkosi, Paula de la Hoz, and Scott Hanselman </h3>
+              <h4 class="codeland-schedule__event-title">Live Speaker Panel</h4>
+              <div class="codeland-schedule__event-speaker-bio">A panel discussion with our recent speakers.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/launchdarkly/launchdarkly-is-proud-to-be-here-at-codeland-3cnd" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-138">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">01:45 PM - 01:48 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Yoz Grahame</h3>
+              <h4 class="codeland-schedule__event-title">A Message From LaunchDarkly</h4>
+              <div class="codeland-schedule__event-speaker-bio">LaunchDarkly enables development and operations teams to deploy code at any time, even if a feature isn't ready to be released to users. Wrapping code with feature flags gives you the safety to test new features and infrastructure in your production environments without impacting the end users.
+      <br>
+      Thank you LaunchDarkly for being a CodeLand sponsor!</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-140">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">01:48 PM - 01:52 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Saron Yitbarek</h3>
+              <h4 class="codeland-schedule__event-title">Emcee Announcement</h4>
+              <div class="codeland-schedule__event-speaker-bio">Up Next: Clips From DevDiscuss</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-141">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">01:52 PM - 01:53 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Levi Sharpe</h3>
+              <h4 class="codeland-schedule__event-title">Clips From DevDiscuss</h4>
+              <div class="codeland-schedule__event-speaker-bio">Check out <a href="https://dev.to/devdiscuss" target="_blank">DevDiscuss</a> from wherever you get your podcasts.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/twilio/compete-for-glory-in-an-iot-tug-of-war-4gnh" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-147">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">01:53 PM - 02:08 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">NomNom the Roomba</h3>
+              <h4 class="codeland-schedule__event-title">Compete For Glory In An IoT Tug-Of-War!</h4>
+              <div class="codeland-schedule__event-speaker-bio">NomNom the Roomba was born in July 2020. A series 585 Roomba, NomNom never goes anywhere without its external microcontroller and <a href="https://www.twilio.com/iot/supersim" target="_blank"> Twilio Super SIM</a>. Its favorite activities are wearing fancy hats and eating confetti.
+      
+      <br>
+      Compete for glory in an IoT tug-of-war! Direct NomNom the Roomba to vacuum up your team’s confetti first. The winning team goes down in history as NomNom’s Most Favorite CodeLanders.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/daraghbyrne/25-ways-mindfulness-and-meditation-help-in-my-career-as-a-software-developer-4anb" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-148">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">02:08 PM - 02:35 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Daragh Byrne</h3>
+              <h4 class="codeland-schedule__event-title">Meditation Break</h4>
+              <div class="codeland-schedule__event-speaker-bio">Daragh Byrne is on a mission to teach programmers everywhere that their mental capacities can become even more fabulous through attention regulation training – otherwise known as meditation. Daragh is the person behind the site Coding Mindfully and the author of "<a href="https://dev.to/daraghbyrne/25-ways-mindfulness-and-meditation-help-in-my-career-as-a-software-developer-4anb" target="_blank"> 25 ways mindfulness and meditation help in my career as a software developer</a>". Join us for this meditation break.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-149">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">02:35 PM - 02:37 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Saron Yitbarek</h3>
+              <h4 class="codeland-schedule__event-title">Welcome Back From Break</h4>
+              <div class="codeland-schedule__event-speaker-bio">Up Next: "The Cost Of Data" with Vaidehi Joshi</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/vaidehijoshi/the-cost-of-data-with-vaidehi-joshi-1mhi" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-150">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">02:37 PM - 02:55 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Vaidehi Joshi</h3>
+              <h4 class="codeland-schedule__event-title">The Cost of Data</h4>
+              <div class="codeland-schedule__event-speaker-bio">Vaidehi Joshi is a senior engineer at Forem, where she builds community and helps improve the software careers of millions. She enjoys building and breaking code, but loves creating empathetic engineering teams a whole lot more. She is the creator of basecs and baseds, two writing series exploring the fundamentals of computer science and distributed systems. She also co-hosts the Base.cs Podcast, and is a producer of the BaseCS and Byte Sized video series.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/nickpalenchar/the-whale-the-container-and-the-ocean-a-docker-tale-with-nick-palenchar-2hj6" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-152">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">02:55 PM - 03:10 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Nick Palenchar</h3>
+              <h4 class="codeland-schedule__event-title">The Whale, the Container, and the Ocean - a Docker Tale</h4>
+              <div class="codeland-schedule__event-speaker-bio">Nick Palenchar is a former Actor/Director turned coder who has been working as a software engineer for 4 years. With particular interest in DevOps tools and Automation, he has worked in large corporations and small startups alike, and maintains open source projects and teaches coding in his spare time.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-154">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">03:10 PM - 03:38 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Nick Palenchar, Saron Yitbarek, and Vaidehi Joshi</h3>
+              <h4 class="codeland-schedule__event-title">Live Speaker Panel</h4>
+              <div class="codeland-schedule__event-speaker-bio">A panel discussion with our recent speakers.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/amitlzkpa/seeing-sound-with-amit-nambiar-18ik" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-155">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">03:38 PM - 03:52 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Amit Nambiar</h3>
+              <h4 class="codeland-schedule__event-title">Seeing Sound - Understanding the Physics of Music Using Visualizations</h4>
+              <div class="codeland-schedule__event-speaker-bio">Amit Nambiar is an architect turned computational designer who uses programming to help architects and engineers do their thing faster and better. He loves all things 3D, teaching programming, and in his free time enjoys kicking around a soccer ball.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/ben/why-forem-is-special-with-ben-halpern-1d61" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-157">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">03:52 PM - 04:17 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Ben Halpern</h3>
+              <h4 class="codeland-schedule__event-title">Why Forem is Special</h4>
+              <div class="codeland-schedule__event-speaker-bio">Ben is a co-founder of Forem, the open source social network platform designed for empowering community. He is from Halifax, Nova Scotia and has a focus primarily in web development.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/rukiaasm/working-smarter-5-steps-to-getting-unstuck-with-rukia-sheikh-mohamed-1932" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-158">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">04:17 PM - 04:34 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Rukia Sheikh-Mohamed</h3>
+              <h4 class="codeland-schedule__event-title">Working Smarter: 5 Steps to Getting Unstuck</h4>
+              <div class="codeland-schedule__event-speaker-bio">Rukia Sheikh-Mohamed is a software engineer based in the Twin Cities, MN who is passionate about all things tech. During her day job she works as full-stack dev at Soona. She enjoys talking about tech at local and national events/conferences, creating cool stuff on the side, and writing tech articles to share useful information and tips. During her free time Rukia enjoys spending time with her baby boy, traveling the world, and creating fun DIYs.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-160">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">04:34 PM - 04:42 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Saron Yibarek</h3>
+              <h4 class="codeland-schedule__event-title">Emcee Announcement</h4>
+              <div class="codeland-schedule__event-speaker-bio">Up Next: "Using Cognitive Services and Mario Kart to Create Astrology" with Chloe Condon</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/chloecondon/using-cognitive-services-and-mario-kart-to-create-astrology-with-chloe-condon-3ek1" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-162">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">04:42 PM - 04:58 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Chloe Condon</h3>
+              <h4 class="codeland-schedule__event-title">Using Cognitive Services and Mario Kart to Create Astrology</h4>
+              <div class="codeland-schedule__event-speaker-bio">Chloe Condon is a Cloud Advocate at Microsoft. Before attending Hackbright Academy and making the career switch into tech, she spent her nights and weekends on-stage as a musical theatre actress. She is passionate about bringing folks with non-traditional and creative backgrounds into technical spaces, and loves to find ways to teach and demo technical examples in quirky and humorous ways.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-164">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">04:58 PM - 05:25 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Amit Nambiar, Chloe Condon, Rukia Sheikh-Mohamed, and Saron Yitbarek</h3>
+              <h4 class="codeland-schedule__event-title">Live Speaker Panel</h4>
+              <div class="codeland-schedule__event-speaker-bio">A panel discussion with our recent speakers.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/ergosesh/hi-we-re-ergosesh-and-we-are-thrilled-to-be-at-codeland-3lbk" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-165">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">05:25 PM - 06:12 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Brett Weiss &amp; Daragh Byrne</h3>
+              <h4 class="codeland-schedule__event-title">ErgoBreak &amp; Meditation Session</h4>
+              <div class="codeland-schedule__event-speaker-bio">ErgoSesh is a team of ergonomic specialists revolutionizing the standard ergonomic assessment. During this ErgoBreak, Brett shares tips on optimizing the space around us.
+      <br>
+      Daragh Byrne is on a mission to teach programmers everywhere that their mental capacities can become even more fabulous through attention regulation training – otherwise known as meditation. Daragh is the person behind the site Coding Mindfully and the author of "<a href="https://dev.to/daraghbyrne/25-ways-mindfulness-and-meditation-help-in-my-career-as-a-software-developer-4anb" target="_blank"> 25 ways mindfulness and meditation help in my career as a software developer</a>". Join us for this meditation break.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-166">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">06:12 PM - 06:15 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Saron Yitbarek</h3>
+              <h4 class="codeland-schedule__event-title">Welcome Back From Break</h4>
+              <div class="codeland-schedule__event-speaker-bio">Up Next: "Machine Learning On The Edge" with Sangeetha KP</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/humblefool_2/machine-learning-on-the-edge-with-sangeetha-kp-5509" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-167">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">06:15 PM - 06:24 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Sangeetha KP</h3>
+              <h4 class="codeland-schedule__event-title">Machine Learning on the Edge</h4>
+              <div class="codeland-schedule__event-speaker-bio">Sangeetha KP is a software developer at Amazon focused on building features for the mobile shopping app. Previously she worked on building features on Echo devices and the Alexa companion app. When she is not programming, she can be found tinkering with photography, scouting around Seattle meetups or lurking on Twitter.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-169">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">06:24 PM - 06:26 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Saron Yitbarek</h3>
+              <h4 class="codeland-schedule__event-title">Emcee Announcement</h4>
+              <div class="codeland-schedule__event-speaker-bio">Up Next: "You And Me Learn All About HTTP" with Safia Abdalla</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/captainsafia/you-and-me-learn-all-about-http-with-safia-abdalla-3nd0" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-170">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">06:26 PM - 06:41 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Safia Abdalla</h3>
+              <h4 class="codeland-schedule__event-title">You and Me Learn All About HTTP</h4>
+              <div class="codeland-schedule__event-speaker-bio">Safia Abdalla is an open source maintainer on the nteract project, a writer, and a software engineer at Microsoft working open source web technologies. She's passionate about bringing people together to build great things and using storytelling to share knowledge.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/github/hi-we-re-github-and-we-re-excited-to-be-at-codeland-32dg" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-172">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">06:41 PM - 06:45 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Brian Douglas</h3>
+              <h4 class="codeland-schedule__event-title">A message from GitHub</h4>
+              <div class="codeland-schedule__event-speaker-bio">GitHub is a development platform inspired by the way you work. From open source to business, you can host and review code, manage projects, and build software alongside 50 million developers.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-172c">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">06:45 PM - 06:46 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Jess Lee</h3>
+              <h4 class="codeland-schedule__event-title">Introducing DevDiscuss</h4>
+              <div class="codeland-schedule__event-speaker-bio">Check out <a href="https://dev.to/devdiscuss" target="_blank">DevDiscuss</a> from wherever you get your podcasts.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-173">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">06:46 PM - 06:47 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Saron Yitbarek</h3>
+              <h4 class="codeland-schedule__event-title">Emcee Announcement</h4>
+              <div class="codeland-schedule__event-speaker-bio">Up Next: An Introduction To Accessibility Insights</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/azure/hi-codeland-we-re-microsoft-and-we-want-to-empower-you-to-do-more-50c8" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-174">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">06:47 PM - 06:50 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Fernanda Bonnin</h3>
+              <h4 class="codeland-schedule__event-title">An Introduction to Accessibility Insights</h4>
+              <div class="codeland-schedule__event-speaker-bio">Fernanda Bonnin is a Program Manager on the Accessibiilty Insights team at Microsoft.
+      <br>
+      Thank you Microsoft for being our Inclusion Sponsor!</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-176">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">06:50 PM - 07:10 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Safia Abdalla, Sangeetha KP, and Saron Yitbarek</h3>
+              <h4 class="codeland-schedule__event-title">Live Speaker Panel</h4>
+              <div class="codeland-schedule__event-speaker-bio">A panel discussion with our recent speakers.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-177b">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">07:10 PM - 07:13 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Molly Struve</h3>
+              <h4 class="codeland-schedule__event-title">A Message From Molly</h4>
+              <div class="codeland-schedule__event-speaker-bio">Molly Struve is a Lead Site Reliability Engineer. During her time working in the software industry, she has had the opportunity to work on some challenging problems. These include scaling Elasticsearch, sharding MySQL databases, and creating an infrastructure that can grow as fast as a booming business. When not making systems run faster, she can be found fulfilling her need for speed by riding and jumping her show horses.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/annthurium/fighting-imposter-syndrome-with-iot-with-tilde-thurium-2mol" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-177c">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">07:13 PM - 07:18 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Tilde Thurium</h3>
+              <h4 class="codeland-schedule__event-title">Fighting Imposter Syndrome With The IoT</h4>
+              <div class="codeland-schedule__event-speaker-bio">Tilde Thurium is an artist, engiqueer, and activist. In previous lives, they have done stints as a florist, a security guard, and a Human Resources wench. In their spare time, they illustrate data structures and algorithms with acrylic paint.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/mlimonczenko/accessibility-matters-how-to-build-apps-for-everyone-with-miranda-limonczenko-1lpm" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-178">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">07:18 PM - 07:34 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Miranda Limonczenko</h3>
+              <h4 class="codeland-schedule__event-title">Accessibility Matters: How to Build Apps for EVERYONE</h4>
+              <div class="codeland-schedule__event-speaker-bio">Miranda Limonczenko is a Senior Technical Writer at VMware, a front-end developer, and a user experience advocate. Miranda chronicles her coding journey at BooksonCode.com.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-182">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">07:34 PM - 07:36 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Saron Yitbarek</h3>
+              <h4 class="codeland-schedule__event-title">Emcee Announcement</h4>
+              <div class="codeland-schedule__event-speaker-bio">Up Next: "Emoji Encoding, Unicode, and Internationalization (I18N)" with Naomi Meyer</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/naeohmi/emoji-encoding-unicode-and-internationalization-with-naomi-meyer-34d3" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-183">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">07:36 PM - 07:57 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Naomi Meyer </h3>
+              <h4 class="codeland-schedule__event-title">Emoji Encoding, Unicode, and Internationalization (I18N)</h4>
+              <div class="codeland-schedule__event-speaker-bio">Naomi is a Software Development Engineer at Adobe on the Globalization, Core Services team where she works on the internationalization and localization of Creative Cloud products. Before coding full time, Naomi worked as a teacher across Asia and West Africa. She enjoys weekends outside - hiking, camping, and riding bikes.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="" class="codeland-schedule__event-link codeland-schedule__event-link__no-hover">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-185">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">07:57 PM - 08:20 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Miranda Limonczenko, Naomi Meyer, and Saron Yitbarek</h3>
+              <h4 class="codeland-schedule__event-title">Live Speaker Panel</h4>
+              <div class="codeland-schedule__event-speaker-bio">A panel discussion with our recent speakers.</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/shanselman/the-art-of-computers-with-scott-hanselman-2mld" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-186">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">08:20 PM - 08:47 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Scott Hanselman</h3>
+              <h4 class="codeland-schedule__event-title">The art of computers</h4>
+              <div class="codeland-schedule__event-speaker-bio">Scott Hanselman is a developer who has been blogging for 18+ years at hanselman.com. He works in open source on cross-platform .NET and the Azure Cloud for Microsoft out of his home office in Portland. His most recent podcast, hanselminutes.com has over 725 episodes of fresh tech from fresh faces. He's written a number of books and spoken in-person to nearly a million developers worldwide. Scott loves code, open source, the open web, STEM, Beyoncé, and podcasting with inclusive tech talk!</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
+      
+        <a href="https://dev.to/jess/codeland-day-one-feedback-4a0p" class="codeland-schedule__event-link">
+          <div class="codeland-schedule__event codeland-schedule__event-past" id="talk-188">
+            <div class="codeland-schedule__event-metadata fs-s s:fs-base">08:47 PM - 09:00 PM CDT </div>
+            <div class="codeland-schedule__event-info">
+              <span class="crayons-indicator codeland-schedule__event-now-playing__visible">
+                Now playing
+              </span>
+              <h3 class="codeland-schedule__event-speaker">Jess Lee &amp; Saron Yitbarek</h3>
+              <h4 class="codeland-schedule__event-title">Closing Remarks</h4>
+              <div class="codeland-schedule__event-speaker-bio">Thank you all for attending CodeLand:Distributed ❤️
+      <br>
+      All talks will be uploaded to DEV in the coming few days.
+      <br>
+      Happy Coding!</div>
+            </div>
+            <div class="codeland-schedule__event-view-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48"><path fill="none" d="M0 0h24v24H0z"></path><path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path></svg>
+            </div>
+          </div>
+        </a>
       </div>
     </div>
   </section>
